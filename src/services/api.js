@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000';
+// CRA uses process.env.REACT_APP_*
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -9,11 +10,9 @@ const api = axios.create({
   },
 });
 
-
-
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token'); // ✅ ONE token key
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -21,7 +20,6 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
 
 api.interceptors.response.use(
   (response) => {
@@ -43,7 +41,6 @@ api.interceptors.response.use(
       console.warn('401 Unauthorized – clearing auth');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-     
     }
 
     return Promise.reject(error);
