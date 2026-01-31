@@ -183,7 +183,7 @@ const GenresPage = () => {
                 <div style={styles.genreContent}>
                   <div style={styles.genreMain}>
                     <h3 style={styles.genreName}>{genre.name}</h3>
-                    <div style={styles.genreId}>Genre ID: {genre.id}</div>
+                   
                   </div>
                   
                   <div style={styles.genreActions}>
@@ -384,11 +384,7 @@ const styles = {
     color: '#111827',
     margin: '0 0 0.25rem 0',
   },
-  genreId: {
-    fontSize: '0.75rem',
-    color: '#6b7280',
-    fontFamily: 'monospace',
-  },
+  
   genreActions: {
     display: 'flex',
     gap: '0.5rem',

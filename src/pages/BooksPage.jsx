@@ -5,6 +5,7 @@ import { genreService } from '../services/genreService';
 
 
 
+
 const BooksPage = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,6 +21,14 @@ const BooksPage = () => {
     available_copies: 1,
     genre_id: '',
   });
+
+  const [userRole, setUserRole] = useState(null);
+
+useEffect(() => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  setUserRole(user?.role);
+}, []);
+
 
   // Fetch books from backend
   useEffect(() => {
@@ -153,10 +162,11 @@ const fetchGenres = async () => {
 const bookData = {
   title: formData.title,
   author: formData.author,
-  published_year: parseInt(formData.published_year),
-  available_copies: parseInt(formData.available_copies),
-  genre_id: 1 // Use ID 1 (Fiction) from your genres list
+  published_year: Number(formData.published_year),
+  available_copies: Number(formData.available_copies),
+  genre_id: Number(formData.genre_id)
 };
+
     
     if (currentBook) {
       await bookService.updateBook(currentBook.id, bookData);
@@ -181,8 +191,10 @@ const bookData = {
         toast.success('Book deleted successfully');
         fetchBooks(); // Refresh the list
       } catch (error) {
-        toast.error('Failed to delete book');
-      }
+           const msg = error.response?.data?.message ||'This book cannot be deleted because it has borrow history.';
+            toast.error(msg);
+          }
+
     }
   };
 
@@ -195,6 +207,8 @@ const bookData = {
     const copies = book.available_copies || 0;
     return copies > 0 ? '#10b981' : '#ef4444';
   };
+
+
 
   return (
     <div style={styles.container}>
@@ -244,12 +258,15 @@ const bookData = {
                   >
                     ✏️
                   </button>
-                  <button 
-                    style={styles.deleteButton}
-                    onClick={() => handleDeleteBook(book.id)}
-                  >
-                    🗑️
-                  </button>
+                   {userRole === 'admin' && (
+                <button 
+                  style={styles.deleteButton}
+                  onClick={() => handleDeleteBook(book.id)}
+                >
+                  🗑️
+                </button>
+              )}
+
                 </div>
               </div>
               
