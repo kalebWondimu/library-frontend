@@ -156,9 +156,10 @@ const MembersPage = () => {
                 
                 <div style={styles.detailRow}>
                   <span style={styles.detailLabel}>Active Borrows:</span>
-                  <span style={styles.detailValue}>
-                    {member.active_borrows || member.borrow_count || 0}
+                 <span style={styles.detailValue}>
+               {member.activeBorrows ?? 0}
                   </span>
+
                 </div>
               </div>
             </div>
