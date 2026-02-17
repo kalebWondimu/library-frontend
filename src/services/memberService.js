@@ -7,4 +7,5 @@ export const memberService = {
   createMember: (memberData) => api.post('/members', memberData),
   updateMember: (id, memberData) => api.patch(`/members/${id}`, memberData),
   deleteMember: (id) => api.delete(`/members/${id}`),
+  
 };
