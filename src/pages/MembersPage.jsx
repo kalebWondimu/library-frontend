@@ -34,16 +34,20 @@ const MembersPage = () => {
   };
 
   const handleOpenModal = (member = null) => {
+    setEditingMember(member);
+
     if (member) {
-      setEditingMember(member);
       setFormData({
         name: member.name || "",
         email: member.email || "",
         phone: member.phone || "",
       });
     } else {
-      setEditingMember(null);
-      setFormData({ name: "", email: "", phone: "" });
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+      });
     }
 
     setIsModalOpen(true);
@@ -126,7 +130,7 @@ const MembersPage = () => {
           <h1 style={styles.title}>Members</h1>
           <p style={styles.subtitle}>Manage library members</p>
         </div>
-        <button style={styles.addButton} onClick={handleOpenModal}>
+        <button style={styles.addButton} onClick={() => handleOpenModal(null)}>
           + Add Member
         </button>
       </div>
@@ -157,9 +161,24 @@ const MembersPage = () => {
                   {member.name || "Unnamed Member"}
                 </h3>
                 <div style={styles.memberActions}>
-                  <button onClick={() => handleOpenModal(member)}>✏️</button>
-                  <button onClick={() => openHistory(member)}>📚</button>
                   <button
+                    title="Edit Member"
+                    style={styles.actionButton}
+                    onClick={() => handleOpenModal(member)}
+                  >
+                    ✏️
+                  </button>
+
+                  <button
+                    title="View Borrow History"
+                    style={styles.actionButton}
+                    onClick={() => openHistory(member)}
+                  >
+                    📚
+                  </button>
+
+                  <button
+                    title="Delete Member"
                     style={styles.deleteButton}
                     onClick={() => handleDeleteMember(member.id)}
                   >
@@ -211,7 +230,9 @@ const MembersPage = () => {
                 {editingMember ? "Edit Member" : "Add New Member"}
               </h2>
               <p style={styles.modalSubtitle}>
-                Enter the details for the new member.
+                {editingMember
+                  ? "Update member details"
+                  : "Enter the details for the new member"}
               </p>
             </div>
 
@@ -379,6 +400,7 @@ const styles = {
   },
   searchInput: {
     width: "100%",
+    boxSizing: "border-box",
     padding: "0.75rem 1rem 0.75rem 3rem",
     fontSize: "0.875rem",
     border: "1px solid #d1d5db",
@@ -420,14 +442,16 @@ const styles = {
     gap: "0.5rem",
   },
   deleteButton: {
-    background: "none",
+    backgroundColor: "#f3f4f6",
     border: "none",
-    fontSize: "1.25rem",
+    fontSize: "1.1rem",
     cursor: "pointer",
-    padding: "0.25rem",
-    borderRadius: "4px",
+    padding: "0.35rem 0.5rem",
+    borderRadius: "6px",
     color: "#ef4444",
+    transition: "0.2s",
   },
+
   memberEmail: {
     fontSize: "0.875rem",
     color: "#6b7280",
