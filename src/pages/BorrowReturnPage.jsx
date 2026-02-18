@@ -3,6 +3,7 @@ import { toast } from 'react-hot-toast';
 import { borrowingService } from '../services/borrowingService';
 import { bookService } from '../services/bookService';
 import { memberService } from '../services/memberService';
+import Select from "react-select";
 
 const BorrowReturnPage = () => {
   const [borrowRecords, setBorrowRecords] = useState([]);
@@ -66,6 +67,68 @@ const returnedBorrowings = borrowRecords.filter(record => record.return_date);
     return dueDate < today;
   });
 
+  // Helper functions (MUST be defined before they're used)
+  const getBookById = (id) => books.find(book => book.id === id);
+  const getMemberById = (id) => members.find(member => member.id === id);
+
+  // Convert data to options for Select components (now defined AFTER helper functions)
+  const bookOptions = books
+    .filter(book => book.available_copies > 0)
+    .map(book => ({
+      value: book.id,
+      label: `${book.title} by ${book.author} (${book.available_copies} available)`
+    }));
+
+  const memberOptions = members.map(member => ({
+    value: member.id,
+    label: `${member.name} (${member.email})`
+  }));
+
+  const borrowRecordOptions = activeBorrowings.map(record => {
+    const book = getBookById(record.book_id);
+    const member = getMemberById(record.member_id);
+
+    return {
+      value: record.id,
+      label: `${book?.title || "Unknown Book"} - Borrowed by ${member?.name || "Unknown Member"}`
+    };
+  });
+
+  // Custom styles for Select components to match UI
+  const selectStyles = {
+    control: (base) => ({
+      ...base,
+      borderRadius: "6px",
+      borderColor: "#d1d5db",
+      minHeight: "38px",
+      fontSize: "0.875rem",
+      boxShadow: "none",
+      '&:hover': {
+        borderColor: "#9ca3af"
+      }
+    }),
+    option: (base, state) => ({
+      ...base,
+      fontSize: "0.875rem",
+      backgroundColor: state.isSelected ? '#4f46e5' : state.isFocused ? '#f3f4f6' : 'white',
+      color: state.isSelected ? 'white' : '#111827',
+    }),
+    menu: (base) => ({
+      ...base,
+      borderRadius: "6px",
+      boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+    }),
+    placeholder: (base) => ({
+      ...base,
+      color: "#9ca3af",
+      fontSize: "0.875rem",
+    }),
+    input: (base) => ({
+      ...base,
+      fontSize: "0.875rem",
+    })
+  };
+
   // Borrow modal handlers
   const handleOpenBorrowModal = () => {
     setBorrowForm({
@@ -120,9 +183,6 @@ const returnedBorrowings = borrowRecords.filter(record => record.return_date);
     toast.error(error.response?.data?.message?.[0] || 'Failed to return book');
   }
 };
-  
-  const getBookById = (id) => books.find(book => book.id === id);
-  const getMemberById = (id) => members.find(member => member.id === id);
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Unknown';
@@ -267,36 +327,30 @@ const returnedBorrowings = borrowRecords.filter(record => record.return_date);
             <form onSubmit={handleBorrowSubmit} style={styles.form}>
               <div style={styles.formGroup}>
                 <label style={styles.label}>Select Book *</label>
-                <select
-                  value={borrowForm.book_id}
-                  onChange={(e) => setBorrowForm({...borrowForm, book_id: e.target.value})}
-                  style={styles.input}
-                  required
-                >
-                  <option value="">Choose a book to borrow</option>
-                  {books.filter(book => book.available_copies > 0).map(book => (
-                    <option key={book.id} value={book.id}>
-                      {book.title} by {book.author} ({book.available_copies} available)
-                    </option>
-                  ))}
-                </select>
+                <Select
+                  options={bookOptions}
+                  value={bookOptions.find(option => option.value === Number(borrowForm.book_id))}
+                  onChange={(selected) =>
+                    setBorrowForm({ ...borrowForm, book_id: selected?.value || "" })
+                  }
+                  placeholder="Search and select book..."
+                  isSearchable
+                  styles={selectStyles}
+                />
               </div>
               
               <div style={styles.formGroup}>
                 <label style={styles.label}>Select Member *</label>
-                <select
-                  value={borrowForm.member_id}
-                  onChange={(e) => setBorrowForm({...borrowForm, member_id: e.target.value})}
-                  style={styles.input}
-                  required
-                >
-                  <option value="">Choose a member</option>
-                  {members.map(member => (
-                    <option key={member.id} value={member.id}>
-                      {member.name} ({member.email})
-                    </option>
-                  ))}
-                </select>
+                <Select
+                  options={memberOptions}
+                  value={memberOptions.find(option => option.value === Number(borrowForm.member_id))}
+                  onChange={(selected) =>
+                    setBorrowForm({ ...borrowForm, member_id: selected?.value || "" })
+                  }
+                  placeholder="Search and select member..."
+                  isSearchable
+                  styles={selectStyles}
+                />
               </div>
               
               <div style={styles.formGroup}>
@@ -337,23 +391,16 @@ const returnedBorrowings = borrowRecords.filter(record => record.return_date);
             <form onSubmit={handleReturnSubmit} style={styles.form}>
               <div style={styles.formGroup}>
                 <label style={styles.label}>Select Book to Return *</label>
-                <select
-                  value={returnForm.borrow_record_id}
-                  onChange={(e) => setReturnForm({...returnForm, borrow_record_id: e.target.value})}
-                  style={styles.input}
-                  required
-                >
-                  <option value="">Choose a book to return</option>
-                  {activeBorrowings.map(record => {
-                    const book = getBookById(record.book_id);
-                    const member = getMemberById(record.member_id);
-                    return (
-                      <option key={record.id} value={record.id}>
-                        {book?.title || 'Unknown Book'} - Borrowed by {member?.name || 'Unknown Member'}
-                      </option>
-                    );
-                  })}
-                </select>
+                <Select
+                  options={borrowRecordOptions}
+                  value={borrowRecordOptions.find(option => option.value === Number(returnForm.borrow_record_id))}
+                  onChange={(selected) =>
+                    setReturnForm({ ...returnForm, borrow_record_id: selected?.value || "" })
+                  }
+                  placeholder="Search borrow record..."
+                  isSearchable
+                  styles={selectStyles}
+                />
               </div>
               
               <div style={styles.formGroup}>
@@ -640,4 +687,4 @@ const styles = {
   },
 };
 
-export default BorrowReturnPage;;
+export default BorrowReturnPage;
