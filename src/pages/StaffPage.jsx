@@ -37,46 +37,11 @@ const StaffPage = () => {
         }
       }
 
-      if (staffData.length === 0) {
-        const demoStaff = localStorage.getItem("demo_staff");
-        if (demoStaff) {
-          staffData = JSON.parse(demoStaff);
-        } else {
-          staffData = [
-            {
-              id: 1,
-              username: "admin",
-              email: "admin@library.com",
-              phone: "(555) 123-4567",
-              role: "admin",
-              status: "active",
-              created_at: new Date().toISOString(),
-            },
-          ];
-          localStorage.setItem("demo_staff", JSON.stringify(staffData));
-        }
-      }
-
       setStaffMembers(staffData);
     } catch (error) {
-      const demoStaff = localStorage.getItem("demo_staff");
-      if (demoStaff) {
-        setStaffMembers(JSON.parse(demoStaff));
-      } else {
-        const initialStaff = [
-          {
-            id: 1,
-            username: "admin",
-            email: "admin@library.com",
-            phone: "(555) 123-4567",
-            role: "admin",
-            status: "active",
-            created_at: new Date().toISOString(),
-          },
-        ];
-        localStorage.setItem("demo_staff", JSON.stringify(initialStaff));
-        setStaffMembers(initialStaff);
-      }
+      console.error("Error fetching staff:", error);
+      toast.error("Failed to load staff members");
+      setStaffMembers([]);
     } finally {
       setLoading(false);
     }
@@ -169,36 +134,12 @@ const StaffPage = () => {
 
       console.log("Saving staff:", staffData);
 
-      let newStaffList;
-
       if (currentStaff) {
-        try {
-          await staffService.updateStaff(currentStaff.id, staffData);
-          toast.success("Staff updated successfully");
-        } catch (error) {
-          newStaffList = staffMembers.map((staff) =>
-            staff.id === currentStaff.id
-              ? { ...staff, ...staffData, updated_at: new Date().toISOString() }
-              : staff,
-          );
-          localStorage.setItem("demo_staff", JSON.stringify(newStaffList));
-          toast.success("Staff updated successfully (demo)");
-        }
+        await staffService.updateStaff(currentStaff.id, staffData);
+        toast.success("Staff updated successfully");
       } else {
-        try {
-          await staffService.createStaff(staffData);
-          toast.success("Staff created successfully");
-        } catch (error) {
-          const newStaff = {
-            id: Date.now(), // Simple ID generation
-            ...staffData,
-            status: "active",
-            created_at: new Date().toISOString(),
-          };
-          newStaffList = [...staffMembers, newStaff];
-          localStorage.setItem("demo_staff", JSON.stringify(newStaffList));
-          toast.success("Staff created successfully (demo)");
-        }
+        await staffService.createStaff(staffData);
+        toast.success("Staff created successfully");
       }
 
       handleCloseModal();
