@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from "react-hot-toast";   // ✅ ADD THIS
+
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import LibrarianDashboardPage from './pages/LibrarianDashboardPage';
@@ -9,7 +11,6 @@ import MembersPage from './pages/MembersPage';
 import GenresPage from './pages/GenresPage';
 import StaffPage from './pages/StaffPage';
 import ReportsPage from './pages/ReportsPage';
-
 import MainLayout from './components/Layout/MainLayout';
 
 const isAuthenticated = () => !!localStorage.getItem('token');
@@ -37,6 +38,7 @@ function App() {
 
   return (
     <Router>
+
       <Routes>
 
         <Route
@@ -52,7 +54,6 @@ function App() {
           }
         />
 
-      
         <Route path="/login" element={<LoginPage />} />
 
         <Route
@@ -72,7 +73,6 @@ function App() {
           <Route path="genres" element={<GenresPage />} />
         </Route>
 
-        
         <Route
           path="/librarian"
           element={
@@ -86,10 +86,13 @@ function App() {
           <Route path="borrow-return" element={<BorrowReturnPage />} />
         </Route>
 
-       
         <Route path="*" element={<Navigate to="/" />} />
 
       </Routes>
+
+      {/* ✅ GLOBAL TOAST CONTAINER */}
+      <Toaster position="top-right" />
+
     </Router>
   );
 }
