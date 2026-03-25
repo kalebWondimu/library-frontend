@@ -4,7 +4,7 @@ export const staffService = {
   getAllStaff: async () => {
     try {
       const response = await api.get('/staff');
-      return { data: response.data };
+      return { status: response.status, data: response.data };
     } catch (error) {
       throw error;
     }

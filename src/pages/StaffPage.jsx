@@ -29,12 +29,12 @@ const StaffPage = () => {
 
       let staffData = [];
 
-      if (response.status === 200) {
-        if (Array.isArray(response.data)) {
-          staffData = response.data;
-        } else if (response.data && Array.isArray(response.data.data)) {
-          staffData = response.data.data;
-        }
+      if (Array.isArray(response.data)) {
+        staffData = response.data;
+      } else if (response.data && Array.isArray(response.data.data)) {
+        staffData = response.data.data;
+      } else if (response.status === 200 && Array.isArray(response.data)) {
+        staffData = response.data;
       }
 
       setStaffMembers(staffData);
