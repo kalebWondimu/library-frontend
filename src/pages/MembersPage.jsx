@@ -308,39 +308,70 @@ const MembersPage = () => {
                   No borrowing history
                 </p>
               ) : (
-                borrowHistory.map((record) => (
-                  <div key={record.id} style={styles.historyCard}>
-                    <h4 style={styles.historyBook}>📖 {record.book?.title}</h4>
+                borrowHistory.map((record) => {
+                  const dueDate = new Date(record.due_date);
+                  const now = new Date();
+                  const isReturned = Boolean(record.return_date);
+                  const returnDate = record.return_date
+                    ? new Date(record.return_date)
+                    : null;
+                  const isOverdue = !isReturned && dueDate < now;
+                  const isLateReturn = isReturned && returnDate > dueDate;
 
-                    <div style={styles.historyRow}>
-                      <span>Borrowed:</span>
-                      <span>
-                        {new Date(record.borrow_date).toLocaleDateString()}
-                      </span>
-                    </div>
+                  let statusText = "Borrowed";
+                  let statusColor = "#3b82f6";
 
-                    <div style={styles.historyRow}>
-                      <span>Due:</span>
-                      <span>
-                        {new Date(record.due_date).toLocaleDateString()}
-                      </span>
-                    </div>
+                  if (isOverdue) {
+                    statusText = "Overdue";
+                    statusColor = "#ef4444";
+                  } else if (isLateReturn) {
+                    statusText = "Returned Late";
+                    statusColor = "#f59e0b";
+                  } else if (isReturned) {
+                    statusText = "Returned";
+                    statusColor = "#10b981";
+                  }
 
-                    <div style={styles.historyRow}>
-                      <span>Status:</span>
-                      <span
-                        style={{
-                          ...styles.historyBadge,
-                          backgroundColor: record.return_date
-                            ? "#10b981"
-                            : "#ef4444",
-                        }}
-                      >
-                        {record.return_date ? "Returned" : "Borrowed"}
-                      </span>
+                  return (
+                    <div key={record.id} style={styles.historyCard}>
+                      <h4 style={styles.historyBook}>
+                        📖 {record.book?.title}
+                      </h4>
+
+                      <div style={styles.historyRow}>
+                        <span>Borrowed:</span>
+                        <span>
+                          {new Date(record.borrow_date).toLocaleDateString()}
+                        </span>
+                      </div>
+
+                      <div style={styles.historyRow}>
+                        <span>Due:</span>
+                        <span>{dueDate.toLocaleDateString()}</span>
+                      </div>
+
+                      {isReturned && (
+                        <div style={styles.historyRow}>
+                          <span>Returned:</span>
+                          <span>{returnDate.toLocaleDateString()}</span>
+                        </div>
+                      )}
+
+                      <div style={styles.historyRow}>
+                        <span>Status:</span>
+                        <span
+                          style={{
+                            ...styles.historyBadge,
+                            backgroundColor: `${statusColor}20`,
+                            color: statusColor,
+                          }}
+                        >
+                          {statusText}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
 
               <div style={{ textAlign: "right", marginTop: "1rem" }}>
