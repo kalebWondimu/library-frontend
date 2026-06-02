@@ -239,10 +239,7 @@ const styles = {
     width: "100%",
     borderCollapse: "collapse",
   },
-  table: {
-    width: "100%",
-    borderCollapse: "collapse",
-  },
+  
   tableHeader: {
     textAlign: "left",
     borderBottom: "1px solid #e5e7eb",

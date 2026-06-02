@@ -45,7 +45,7 @@ function App() {
           path="/"
           element={
             isAuthenticated() ? (
-              role === 'admin'
+              role === 'admin' || role === 'super-admin'
                 ? <Navigate to="/admin/dashboard" />
                 : <Navigate to="/librarian/dashboard" />
             ) : (
@@ -59,7 +59,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            <PrivateRoute allowedRoles={['admin']}>
+            <PrivateRoute allowedRoles={['admin', 'super-admin']}>
               <MainLayout />
             </PrivateRoute>
           }
