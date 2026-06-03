@@ -25,9 +25,12 @@ const MainLayout = () => {
 
   if (!user) return null;
 
-  const base = user.role === "admin" ? "/admin" : "/librarian";
+  const base =
+    user.role === "admin" || user.role === "super-admin"
+      ? "/admin"
+      : "/librarian";
   const menuItems =
-    user.role === "admin"
+    user.role === "super-admin"
       ? [
           { icon: "📊", label: "Dashboard", path: `${base}/dashboard` },
           { icon: "📚", label: "Books", path: `${base}/books` },
@@ -37,11 +40,28 @@ const MainLayout = () => {
           { icon: "📈", label: "Reports", path: `${base}/reports` },
           { icon: "🏷️", label: "Genres", path: `${base}/genres` },
         ]
-      : [
-          { icon: "📊", label: "Dashboard", path: `${base}/dashboard` },
-          { icon: "📚", label: "Books", path: `${base}/books` },
-          { icon: "🔄", label: "Borrow/Return", path: `${base}/borrow-return` },
-        ];
+      : user.role === "admin"
+        ? [
+            { icon: "📊", label: "Dashboard", path: `${base}/dashboard` },
+            { icon: "📚", label: "Books", path: `${base}/books` },
+            {
+              icon: "🔄",
+              label: "Borrow/Return",
+              path: `${base}/borrow-return`,
+            },
+            { icon: "👥", label: "Members", path: `${base}/members` },
+            { icon: "📈", label: "Reports", path: `${base}/reports` },
+            { icon: "🏷️", label: "Genres", path: `${base}/genres` },
+          ]
+        : [
+            { icon: "📊", label: "Dashboard", path: `${base}/dashboard` },
+            { icon: "📚", label: "Books", path: `${base}/books` },
+            {
+              icon: "🔄",
+              label: "Borrow/Return",
+              path: `${base}/borrow-return`,
+            },
+          ];
 
   const handleLogout = () => {
     localStorage.clear();

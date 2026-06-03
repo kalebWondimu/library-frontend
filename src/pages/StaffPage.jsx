@@ -8,6 +8,7 @@ const StaffPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentStaff, setCurrentStaff] = useState(null);
+  const [userRole, setUserRole] = useState("");
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -18,7 +19,23 @@ const StaffPage = () => {
   });
 
   useEffect(() => {
-    fetchStaff();
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUserRole(parsedUser.role || "");
+        if (parsedUser.role === "super-admin") {
+          fetchStaff();
+        } else {
+          setLoading(false);
+        }
+      } catch {
+        setUserRole("");
+        setLoading(false);
+      }
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   const fetchStaff = async () => {
@@ -110,12 +127,21 @@ const StaffPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!currentStaff && formData.password !== formData.confirmPassword) {
+    const isUpdatingWithPassword =
+      currentStaff && userRole === "super-admin" && formData.password;
+
+    if (
+      (!currentStaff || isUpdatingWithPassword) &&
+      formData.password !== formData.confirmPassword
+    ) {
       toast.error("Passwords do not match");
       return;
     }
 
-    if (!currentStaff && formData.password.length < 6) {
+    if (
+      (!currentStaff || isUpdatingWithPassword) &&
+      formData.password.length < 6
+    ) {
       toast.error("Password must be at least 6 characters");
       return;
     }
@@ -128,7 +154,7 @@ const StaffPage = () => {
         role: formData.role,
       };
 
-      if (!currentStaff) {
+      if (!currentStaff || isUpdatingWithPassword) {
         staffData.password = formData.password;
       }
 
@@ -193,7 +219,8 @@ const StaffPage = () => {
       <div style={styles.adminNote}>
         <div style={styles.adminNoteIcon}>🛡️</div>
         <div style={styles.adminNoteContent}>
-          <strong>Admin Only</strong> - Manage library staff and administrators
+          <strong>Super Admin Only</strong> - Manage library staff and
+          administrators
         </div>
       </div>
 
@@ -202,12 +229,14 @@ const StaffPage = () => {
         <div style={styles.headerLeft}>
           <h1 style={styles.title}>Staff</h1>
           <p style={styles.subtitle}>
-            Manage library staff and administrators (Admin Only)
+            Manage library staff and administrators (Super Admin Only)
           </p>
         </div>
-        <button style={styles.addButton} onClick={() => handleOpenModal()}>
-          + Add Staff
-        </button>
+        {userRole === "super-admin" && (
+          <button style={styles.addButton} onClick={() => handleOpenModal()}>
+            + Add Staff
+          </button>
+        )}
       </div>
 
       {/* Search bar*/}
@@ -223,7 +252,15 @@ const StaffPage = () => {
       </div>
 
       <div style={styles.staffGrid}>
-        {loading ? (
+        {userRole && userRole !== "super-admin" ? (
+          <div style={styles.unauthorized}>
+            <h2>Access denied</h2>
+            <p>
+              Your account does not have permission to manage staff. Only the
+              super-admin may view and update staff records.
+            </p>
+          </div>
+        ) : loading ? (
           <div style={styles.loading}>Loading staff members...</div>
         ) : filteredStaff.length === 0 ? (
           <div style={styles.noResults}>
@@ -371,33 +408,60 @@ const StaffPage = () => {
                 </select>
               </div>
 
-              {!currentStaff && (
+              {(!currentStaff || userRole === "super-admin") && (
                 <>
+                  {currentStaff && userRole === "super-admin" && (
+                    <div style={styles.passwordSection}>
+                      <h3 style={styles.passwordSectionTitle}>
+                        Change Password
+                      </h3>
+                      <p style={styles.passwordSectionText}>
+                        Enter a new password to update the user's login
+                        credentials. Leave both fields blank to keep the current
+                        password.
+                      </p>
+                    </div>
+                  )}
+
                   <div style={styles.formGroup}>
-                    <label style={styles.label}>Password *</label>
+                    <label style={styles.label}>
+                      {currentStaff ? "New Password (optional)" : "Password *"}
+                    </label>
                     <input
                       type="password"
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
                       style={styles.input}
-                      required
-                      placeholder="Enter password (min. 6 characters)"
+                      placeholder={
+                        currentStaff
+                          ? "Enter new password (min. 6 characters)"
+                          : "Enter password (min. 6 characters)"
+                      }
                       minLength="6"
+                      required={!currentStaff}
                     />
                   </div>
 
                   <div style={styles.formGroup}>
-                    <label style={styles.label}>Confirm Password *</label>
+                    <label style={styles.label}>
+                      {currentStaff
+                        ? "Confirm New Password"
+                        : "Confirm Password *"}
+                    </label>
                     <input
                       type="password"
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
                       style={styles.input}
-                      required
-                      placeholder="Confirm password"
+                      placeholder={
+                        currentStaff
+                          ? "Confirm new password"
+                          : "Confirm password"
+                      }
                       minLength="6"
+                      required={!currentStaff}
                     />
                   </div>
                 </>
@@ -443,6 +507,23 @@ const styles = {
   adminNoteContent: {
     fontSize: "0.875rem",
     color: "#92400e",
+  },
+  passwordSection: {
+    border: "1px solid #d1d5db",
+    borderRadius: "8px",
+    padding: "1rem",
+    backgroundColor: "#f8fafc",
+    marginBottom: "1rem",
+  },
+  passwordSectionTitle: {
+    fontSize: "1rem",
+    fontWeight: "600",
+    margin: "0 0 0.25rem 0",
+  },
+  passwordSectionText: {
+    margin: 0,
+    color: "#6b7280",
+    fontSize: "0.9rem",
   },
   header: {
     display: "flex",
