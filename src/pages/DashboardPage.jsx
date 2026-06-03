@@ -72,6 +72,19 @@ const DashboardPage = () => {
     }
   };
 
+  const getUserRole = () => {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) return null;
+    try {
+      return JSON.parse(userStr).role;
+    } catch {
+      return null;
+    }
+  };
+
+  const role = getUserRole(); // 'admin' | 'super-admin' | 'librarian'
+  const base = (role === 'admin' || role === 'super-admin') ? '/admin' : '/librarian';
+
   const quickActions = [
     { label: 'Borrow Book', icon: '📥', path: '/borrow-return', color: '#3b82f6', description: 'Process book borrowing' },
     { label: 'Return Book', icon: '📤', path: '/borrow-return', color: '#10b981', description: 'Process book returns' },
@@ -80,11 +93,6 @@ const DashboardPage = () => {
     { label: 'Manage Genres', icon: '🏷️', path: '/genres', color: '#ef4444', description: 'Manage book categories' },
     { label: 'Admin Reports', icon: '📊', path: '/reports', color: '#06b6d4', description: 'View system analytics' },
   ];
-
-  
-const role = localStorage.getItem('role'); // 'admin' | 'librarian'
-
-const base = role === 'admin' ? '/admin' : '/librarian';
 
 const handleQuickAction = (path) => {
   navigate(`${base}${path}`);

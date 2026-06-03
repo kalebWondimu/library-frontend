@@ -71,13 +71,22 @@ const fetchDashboardData = async () => {
     { label: 'Add Book', icon: '📚', path: '/books', color: '#f59e0b', description: 'Add new books to catalog' },
   ];
 
-  const role = localStorage.getItem('role');
+  const getUserRole = () => {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) return null;
+    try {
+      return JSON.parse(userStr).role;
+    } catch {
+      return null;
+    }
+  };
 
-const base = role === 'admin' ? '/admin' : '/librarian';
+  const role = getUserRole(); // librarian role
+  const base = '/librarian';
 
-const handleQuickAction = (path) => {
-  navigate(`${base}${path}`);
-};
+  const handleQuickAction = (path) => {
+    navigate(`${base}${path}`);
+  };
 
 
   return (
