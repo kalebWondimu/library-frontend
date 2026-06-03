@@ -1,7 +1,14 @@
 import axios from 'axios';
 
 // CRA uses process.env.REACT_APP_*
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+const getDefaultApiUrl = () => {
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    return 'https://library-backend-43t3.onrender.com';
+  }
+  return 'http://localhost:3000';
+};
+
+const API_URL = process.env.REACT_APP_API_URL || getDefaultApiUrl();
 
 const api = axios.create({
   baseURL: API_URL,
