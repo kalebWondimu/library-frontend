@@ -81,7 +81,6 @@ const fetchDashboardData = async () => {
     }
   };
 
-  const role = getUserRole(); // librarian role
   const base = '/librarian';
 
   const handleQuickAction = (path) => {
