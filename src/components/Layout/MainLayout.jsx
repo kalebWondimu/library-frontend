@@ -50,7 +50,8 @@ const MainLayout = () => {
               path: `${base}/borrow-return`,
             },
             { icon: "👥", label: "Members", path: `${base}/members` },
-            { icon: "📈", label: "Reports", path: `${base}/reports` },
+            { icon: "�‍💼", label: "Staff", path: `${base}/staff` },
+            { icon: "�📈", label: "Reports", path: `${base}/reports` },
             { icon: "🏷️", label: "Genres", path: `${base}/genres` },
           ]
         : [

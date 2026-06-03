@@ -24,7 +24,7 @@ const StaffPage = () => {
       try {
         const parsedUser = JSON.parse(storedUser);
         setUserRole(parsedUser.role || "");
-        if (parsedUser.role === "super-admin") {
+        if (parsedUser.role === "super-admin" || parsedUser.role === "admin") {
           fetchStaff();
         } else {
           setLoading(false);
@@ -252,12 +252,12 @@ const StaffPage = () => {
       </div>
 
       <div style={styles.staffGrid}>
-        {userRole && userRole !== "super-admin" ? (
+        {userRole && userRole !== "super-admin" && userRole !== "admin" ? (
           <div style={styles.unauthorized}>
             <h2>Access denied</h2>
             <p>
-              Your account does not have permission to manage staff. Only the
-              super-admin may view and update staff records.
+              Your account does not have permission to manage staff. Only admin
+              and super-admin can view and update staff records.
             </p>
           </div>
         ) : loading ? (
