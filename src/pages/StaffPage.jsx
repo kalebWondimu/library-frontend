@@ -219,7 +219,7 @@ const StaffPage = () => {
       <div style={styles.adminNote}>
         <div style={styles.adminNoteIcon}>🛡️</div>
         <div style={styles.adminNoteContent}>
-          <strong>Super Admin Only</strong> - Manage library staff and
+          <strong>Admin & Super Admin</strong> - Manage library staff and
           administrators
         </div>
       </div>
@@ -229,10 +229,10 @@ const StaffPage = () => {
         <div style={styles.headerLeft}>
           <h1 style={styles.title}>Staff</h1>
           <p style={styles.subtitle}>
-            Manage library staff and administrators (Super Admin Only)
+            Manage library staff and administrators (Admin & Super Admin)
           </p>
         </div>
-        {userRole === "super-admin" && (
+        {(userRole === "super-admin" || userRole === "admin") && (
           <button style={styles.addButton} onClick={() => handleOpenModal()}>
             + Add Staff
           </button>
