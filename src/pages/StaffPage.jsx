@@ -9,6 +9,8 @@ const StaffPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentStaff, setCurrentStaff] = useState(null);
   const [userRole, setUserRole] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -77,6 +79,22 @@ const StaffPage = () => {
       staff.phone?.toLowerCase().includes(query)
     );
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  const totalPages = Math.ceil(filteredStaff.length / itemsPerPage);
+  const paginatedStaff = filteredStaff.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(Math.max(1, totalPages));
+    }
+  }, [currentPage, totalPages]);
 
   const handleOpenModal = (staff = null) => {
     if (staff) {
@@ -268,7 +286,7 @@ const StaffPage = () => {
             {searchQuery && "Try a different search."}
           </div>
         ) : (
-          filteredStaff.map((staff) => (
+          paginatedStaff.map((staff) => (
             <div key={staff.id} style={styles.staffCard}>
               <div style={styles.staffHeader}>
                 <div style={styles.staffInfo}>
@@ -577,6 +595,36 @@ const styles = {
     top: "50%",
     transform: "translateY(-50%)",
     color: "#9ca3af",
+  },
+  paginationBar: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "0.75rem",
+    marginTop: "1rem",
+    padding: "0.9rem 1rem",
+    backgroundColor: "#f8fafc",
+    borderRadius: "10px",
+    border: "1px solid #e5e7eb",
+    gridColumn: "1 / -1",
+  },
+  paginationText: {
+    fontSize: "0.9rem",
+    color: "#475569",
+    fontWeight: 600,
+  },
+  paginationButton: {
+    border: "1px solid #d1d5db",
+    backgroundColor: "white",
+    color: "#374151",
+    padding: "0.55rem 0.95rem",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontWeight: 600,
+  },
+  paginationButtonDisabled: {
+    opacity: 0.6,
+    cursor: "not-allowed",
   },
   staffGrid: {
     display: "grid",

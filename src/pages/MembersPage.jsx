@@ -10,6 +10,10 @@ const MembersPage = () => {
   const [historyModal, setHistoryModal] = useState(false);
   const [borrowHistory, setBorrowHistory] = useState([]);
   const [editingMember, setEditingMember] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [historyPage, setHistoryPage] = useState(1);
+  const itemsPerPage = 6;
+  const historyItemsPerPage = 4;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -20,6 +24,14 @@ const MembersPage = () => {
   useEffect(() => {
     fetchMembers();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setHistoryPage(1);
+  }, [historyModal]);
 
   const fetchMembers = async () => {
     try {
@@ -113,6 +125,26 @@ const MembersPage = () => {
     );
   });
 
+  const totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
+  const paginatedMembers = filteredMembers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
+  const totalHistoryPages = Math.ceil(
+    borrowHistory.length / historyItemsPerPage,
+  );
+  const paginatedHistory = borrowHistory.slice(
+    (historyPage - 1) * historyItemsPerPage,
+    historyPage * historyItemsPerPage,
+  );
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(Math.max(1, totalPages));
+    }
+  }, [currentPage, totalPages]);
+
   const openHistory = async (member) => {
     try {
       const res = await memberService.getMemberBorrowingHistory(member.id);
@@ -154,70 +186,107 @@ const MembersPage = () => {
             👥 No members found. {searchQuery && "Try a different search."}
           </div>
         ) : (
-          filteredMembers.map((member) => (
-            <div key={member.id} style={styles.memberCard}>
-              <div style={styles.memberHeader}>
-                <h3 style={styles.memberName}>
-                  {member.name || "Unnamed Member"}
-                </h3>
-                <div style={styles.memberActions}>
-                  <button
-                    title="Edit Member"
-                    style={styles.actionButton}
-                    onClick={() => handleOpenModal(member)}
-                  >
-                    ✏️
-                  </button>
+          <>
+            {paginatedMembers.map((member) => (
+              <div key={member.id} style={styles.memberCard}>
+                <div style={styles.memberHeader}>
+                  <h3 style={styles.memberName}>
+                    {member.name || "Unnamed Member"}
+                  </h3>
+                  <div style={styles.memberActions}>
+                    <button
+                      title="Edit Member"
+                      style={styles.actionButton}
+                      onClick={() => handleOpenModal(member)}
+                    >
+                      ✏️
+                    </button>
 
-                  <button
-                    title="View Borrow History"
-                    style={styles.actionButton}
-                    onClick={() => openHistory(member)}
-                  >
-                    📚
-                  </button>
+                    <button
+                      title="View Borrow History"
+                      style={styles.actionButton}
+                      onClick={() => openHistory(member)}
+                    >
+                      📚
+                    </button>
 
-                  <button
-                    title="Delete Member"
-                    style={styles.deleteButton}
-                    onClick={() => handleDeleteMember(member.id)}
-                  >
-                    🗑️
-                  </button>
+                    <button
+                      title="Delete Member"
+                      style={styles.deleteButton}
+                      onClick={() => handleDeleteMember(member.id)}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+
+                <p style={styles.memberEmail}>{member.email || "No email"}</p>
+
+                {member.phone && (
+                  <p style={styles.memberPhone}>Phone: {member.phone}</p>
+                )}
+
+                <div style={styles.memberDetails}>
+                  <div style={styles.detailRow}>
+                    <span style={styles.detailLabel}>Joined:</span>
+                    <span style={styles.detailValue}>
+                      {member.createdAt || member.join_date
+                        ? new Date(
+                            member.createdAt || member.join_date,
+                          ).toLocaleDateString("en-US", {
+                            month: "numeric",
+                            day: "numeric",
+                            year: "numeric",
+                          })
+                        : "Unknown"}
+                    </span>
+                  </div>
+
+                  <div style={styles.detailRow}>
+                    <span style={styles.detailLabel}>Active Borrows:</span>
+                    <span style={styles.detailValue}>
+                      {member.activeBorrows ?? 0}
+                    </span>
+                  </div>
                 </div>
               </div>
-
-              <p style={styles.memberEmail}>{member.email || "No email"}</p>
-
-              {member.phone && (
-                <p style={styles.memberPhone}>Phone: {member.phone}</p>
-              )}
-
-              <div style={styles.memberDetails}>
-                <div style={styles.detailRow}>
-                  <span style={styles.detailLabel}>Joined:</span>
-                  <span style={styles.detailValue}>
-                    {member.createdAt || member.join_date
-                      ? new Date(
-                          member.createdAt || member.join_date,
-                        ).toLocaleDateString("en-US", {
-                          month: "numeric",
-                          day: "numeric",
-                          year: "numeric",
-                        })
-                      : "Unknown"}
-                  </span>
-                </div>
-
-                <div style={styles.detailRow}>
-                  <span style={styles.detailLabel}>Active Borrows:</span>
-                  <span style={styles.detailValue}>
-                    {member.activeBorrows ?? 0}
-                  </span>
-                </div>
+            ))}
+            {totalPages > 1 && (
+              <div style={styles.paginationBar}>
+                <button
+                  style={{
+                    ...styles.paginationButton,
+                    ...(currentPage === 1
+                      ? styles.paginationButtonDisabled
+                      : {}),
+                  }}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(1, prev - 1))
+                  }
+                  disabled={currentPage === 1}
+                >
+                  ← Previous
+                </button>
+                <span style={styles.paginationText}>
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  style={{
+                    ...styles.paginationButton,
+                    ...(currentPage === totalPages
+                      ? styles.paginationButtonDisabled
+                      : {}),
+                  }}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                >
+                  Next →
+                </button>
               </div>
-            </div>
-          ))
+            )}
+          </>
         )}
       </div>
 
@@ -308,7 +377,7 @@ const MembersPage = () => {
                   No borrowing history
                 </p>
               ) : (
-                borrowHistory.map((record) => {
+                paginatedHistory.map((record) => {
                   const dueDate = new Date(record.due_date);
                   const now = new Date();
                   const isReturned = Boolean(record.return_date);
@@ -372,6 +441,44 @@ const MembersPage = () => {
                     </div>
                   );
                 })
+              )}
+
+              {totalHistoryPages > 1 && (
+                <div style={styles.paginationBar}>
+                  <button
+                    style={{
+                      ...styles.paginationButton,
+                      ...(historyPage === 1
+                        ? styles.paginationButtonDisabled
+                        : {}),
+                    }}
+                    onClick={() =>
+                      setHistoryPage((prev) => Math.max(1, prev - 1))
+                    }
+                    disabled={historyPage === 1}
+                  >
+                    ← Previous
+                  </button>
+                  <span style={styles.paginationText}>
+                    Page {historyPage} of {totalHistoryPages}
+                  </span>
+                  <button
+                    style={{
+                      ...styles.paginationButton,
+                      ...(historyPage === totalHistoryPages
+                        ? styles.paginationButtonDisabled
+                        : {}),
+                    }}
+                    onClick={() =>
+                      setHistoryPage((prev) =>
+                        Math.min(totalHistoryPages, prev + 1),
+                      )
+                    }
+                    disabled={historyPage === totalHistoryPages}
+                  >
+                    Next →
+                  </button>
+                </div>
               )}
 
               <div style={{ textAlign: "right", marginTop: "1rem" }}>

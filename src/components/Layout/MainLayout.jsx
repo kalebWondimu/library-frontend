@@ -29,6 +29,13 @@ const MainLayout = () => {
     user.role === "admin" || user.role === "super-admin"
       ? "/admin"
       : "/librarian";
+
+  const formatRole = (role = "") =>
+    role
+      .split("-")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+
   const menuItems =
     user.role === "super-admin"
       ? [
@@ -50,8 +57,8 @@ const MainLayout = () => {
               path: `${base}/borrow-return`,
             },
             { icon: "👥", label: "Members", path: `${base}/members` },
-            { icon: "�‍💼", label: "Staff", path: `${base}/staff` },
-            { icon: "�📈", label: "Reports", path: `${base}/reports` },
+            { icon: "👨‍💼", label: "Staff", path: `${base}/staff` },
+            { icon: "📈", label: "Reports", path: `${base}/reports` },
             { icon: "🏷️", label: "Genres", path: `${base}/genres` },
           ]
         : [
@@ -62,12 +69,17 @@ const MainLayout = () => {
               label: "Borrow/Return",
               path: `${base}/borrow-return`,
             },
+            { icon: "👥", label: "Members", path: `${base}/members` },
           ];
 
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login", { replace: true });
   };
+
+  const activePage =
+    menuItems.find((item) => location.pathname.startsWith(item.path))?.label ||
+    "Dashboard";
 
   return (
     <div style={styles.container}>
@@ -90,30 +102,37 @@ const MainLayout = () => {
               </Link>
             ))}
           </nav>
-          <div style={styles.userInfo}>
-            <p>{user.username}</p>
-            <p>{user.role.toUpperCase()}</p>
-            <button style={styles.logoutButton} onClick={handleLogout}>
-              Logout
-            </button>
-          </div>
+          <button style={styles.logoutButton} onClick={handleLogout}>
+            Logout
+          </button>
         </aside>
       )}
 
-      {/* Main Content */}
       <div style={{ ...styles.main, marginLeft: sidebarOpen ? 302 : 0 }}>
-        {/* Top Bar */}
         <div style={styles.topBar}>
-          <button
-            style={styles.toggleButton}
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            {sidebarOpen ? "◀" : "▶"}
-          </button>
-          <h1 style={styles.pageTitle}>
-            {menuItems.find((item) => location.pathname.startsWith(item.path))
-              ?.label || "Dashboard"}
-          </h1>
+          <div style={styles.topBarLeft}>
+            <button
+              style={styles.toggleButton}
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              {sidebarOpen ? "◀" : "▶"}
+            </button>
+            <h1 style={styles.pageTitle}>{activePage}</h1>
+          </div>
+
+          <div style={styles.profileCard}>
+            <div style={styles.profileAvatar}>
+              {(user.username || "U").charAt(0).toUpperCase()}
+            </div>
+            <div style={styles.profileText}>
+              <div style={styles.profileName}>
+                Welcome, {user.username || "User"}
+              </div>
+              <div style={styles.profileRole}>
+                {formatRole(user.role || "")}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div style={styles.content}>
@@ -124,7 +143,6 @@ const MainLayout = () => {
   );
 };
 
-// Styles
 const styles = {
   container: { display: "flex", minHeight: "100vh", background: "#f3f4f6" },
   sidebar: {
@@ -156,19 +174,15 @@ const styles = {
   },
   navLinkActive: { background: "#374151", color: "#fff", fontWeight: 600 },
   icon: { marginRight: 8 },
-  userInfo: {
-    marginTop: "auto",
-    paddingTop: 16,
-    borderTop: "1px solid #374151",
-  },
   logoutButton: {
     marginTop: 8,
-    padding: "0.5rem 1rem",
+    padding: "0.75rem 1rem",
     background: "#ef4444",
     color: "#fff",
     border: "none",
     borderRadius: 6,
     cursor: "pointer",
+    fontWeight: 600,
   },
   main: {
     flex: 1,
@@ -182,12 +196,18 @@ const styles = {
     padding: "1rem 1.5rem",
     display: "flex",
     alignItems: "center",
+    justifyContent: "space-between",
     gap: "1rem",
     borderBottom: "1px solid #e5e7eb",
     boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
     position: "sticky",
     top: 0,
     zIndex: 10,
+  },
+  topBarLeft: {
+    display: "flex",
+    alignItems: "center",
+    gap: "0.75rem",
   },
   toggleButton: {
     padding: "0.5rem",
@@ -197,6 +217,33 @@ const styles = {
     cursor: "pointer",
   },
   pageTitle: { fontSize: "1.25rem", fontWeight: 600, margin: 0 },
+  profileCard: {
+    display: "flex",
+    alignItems: "center",
+    gap: "0.75rem",
+    background: "#f8fafc",
+    border: "1px solid #e2e8f0",
+    borderRadius: 999,
+    padding: "0.5rem 0.9rem",
+  },
+  profileAvatar: {
+    width: 38,
+    height: 38,
+    borderRadius: "50%",
+    background: "linear-gradient(135deg, #4f46e5, #2563eb)",
+    color: "#fff",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: 700,
+  },
+  profileText: { display: "flex", flexDirection: "column" },
+  profileName: { fontSize: "0.95rem", fontWeight: 600, color: "#111827" },
+  profileRole: {
+    fontSize: "0.8rem",
+    color: "#64748b",
+    textTransform: "capitalize",
+  },
   content: { flex: 1, padding: "1.5rem", background: "#f3f4f6" },
 };
 

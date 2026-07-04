@@ -84,6 +84,7 @@ function App() {
           <Route path="dashboard" element={<LibrarianDashboardPage />} />
           <Route path="books" element={<BooksPage />} />
           <Route path="borrow-return" element={<BorrowReturnPage />} />
+          <Route path="members" element={<MembersPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" />} />

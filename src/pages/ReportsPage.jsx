@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { borrowingService } from "../services/borrowingService";
 import { memberService } from "../services/memberService";
 import { toast } from "react-hot-toast";
@@ -60,14 +60,18 @@ const ReportsPage = () => {
     const lastMonth = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     return data.filter((item) => {
-      const itemDate = new Date(item.borrow_date || item.created_at || item.date);
+      const itemDate = new Date(
+        item.borrow_date || item.created_at || item.date,
+      );
       if (!itemDate) return true;
 
       switch (dateFilter) {
         case "today":
-          return itemDate.getDate() === today.getDate() &&
-                 itemDate.getMonth() === today.getMonth() &&
-                 itemDate.getFullYear() === today.getFullYear();
+          return (
+            itemDate.getDate() === today.getDate() &&
+            itemDate.getMonth() === today.getMonth() &&
+            itemDate.getFullYear() === today.getFullYear()
+          );
         case "week":
           return itemDate >= lastWeek && itemDate <= today;
         case "month":
@@ -128,8 +132,14 @@ const ReportsPage = () => {
     }
 
     const element = document.createElement("a");
-    element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(pdfContent));
-    element.setAttribute("download", `report-${activeReport}-${new Date().getTime()}.txt`);
+    element.setAttribute(
+      "href",
+      "data:text/plain;charset=utf-8," + encodeURIComponent(pdfContent),
+    );
+    element.setAttribute(
+      "download",
+      `report-${activeReport}-${new Date().getTime()}.txt`,
+    );
     element.style.display = "none";
     document.body.appendChild(element);
     element.click();
@@ -140,7 +150,8 @@ const ReportsPage = () => {
   const renderReportContent = () => {
     if (loading) return <p>Loading report...</p>;
     if (error) return <p style={{ color: "red" }}>❌ {error}</p>;
-    if (!reportData) return <p>Select a report card to view details.</p>;
+    if (!reportData)
+      return <p>Select a report card to review library insights and trends.</p>;
 
     const paginatedData = getPaginatedData(reportData);
     const totalPages = getTotalPages(reportData);
@@ -175,7 +186,8 @@ const ReportsPage = () => {
             <ul style={styles.list}>
               {paginatedData.map((item, idx) => (
                 <li key={item.book_id || idx}>
-                  <strong>{item.book_title || item.title || "Unknown"}</strong> - {item.borrow_count || item.count || 0} borrows
+                  <strong>{item.book_title || item.title || "Unknown"}</strong>{" "}
+                  - {item.borrow_count || item.count || 0} borrows
                 </li>
               ))}
             </ul>
@@ -188,9 +200,13 @@ const ReportsPage = () => {
                 >
                   ← Prev
                 </button>
-                <span>Page {currentPage} of {totalPages}</span>
+                <span>
+                  Page {currentPage} of {totalPages}
+                </span>
                 <button
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  onClick={() =>
+                    setCurrentPage(Math.min(totalPages, currentPage + 1))
+                  }
                   disabled={currentPage === totalPages}
                   style={styles.paginationBtn}
                 >
@@ -235,7 +251,9 @@ const ReportsPage = () => {
                   <tr key={item.member_id || item.id}>
                     <td style={styles.tableCell}>{item.name}</td>
                     <td style={styles.tableCell}>{item.totalBorrows || 0}</td>
-                    <td style={styles.tableCell}>{item.outstandingBorrows || 0}</td>
+                    <td style={styles.tableCell}>
+                      {item.outstandingBorrows || 0}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -249,9 +267,13 @@ const ReportsPage = () => {
                 >
                   ← Prev
                 </button>
-                <span>Page {currentPage} of {totalPages}</span>
+                <span>
+                  Page {currentPage} of {totalPages}
+                </span>
                 <button
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  onClick={() =>
+                    setCurrentPage(Math.min(totalPages, currentPage + 1))
+                  }
                   disabled={currentPage === totalPages}
                   style={styles.paginationBtn}
                 >
@@ -273,8 +295,13 @@ const ReportsPage = () => {
             <ul style={styles.list}>
               {paginatedData.map((record) => (
                 <li key={record.id}>
-                  <strong>{record.book?.title || record.title || "Unknown"}</strong> borrowed by{" "}
-                  <strong>{record.member?.name || record.memberName || "Unknown"}</strong>
+                  <strong>
+                    {record.book?.title || record.title || "Unknown"}
+                  </strong>{" "}
+                  borrowed by{" "}
+                  <strong>
+                    {record.member?.name || record.memberName || "Unknown"}
+                  </strong>
                   <br />
                   📅 Due: {new Date(record.due_date).toLocaleDateString()}
                 </li>
@@ -289,9 +316,13 @@ const ReportsPage = () => {
                 >
                   ← Prev
                 </button>
-                <span>Page {currentPage} of {totalPages}</span>
+                <span>
+                  Page {currentPage} of {totalPages}
+                </span>
                 <button
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  onClick={() =>
+                    setCurrentPage(Math.min(totalPages, currentPage + 1))
+                  }
                   disabled={currentPage === totalPages}
                   style={styles.paginationBtn}
                 >
@@ -445,7 +476,7 @@ const styles = {
     borderCollapse: "collapse",
     marginTop: "1rem",
   },
-  
+
   tableHeader: {
     textAlign: "left",
     borderBottom: "2px solid #d1d5db",
@@ -478,15 +509,26 @@ const styles = {
     marginTop: "1.5rem",
     padding: "1rem",
     backgroundColor: "#f9fafb",
-    borderRadius: "6px",
+    borderRadius: "8px",
+    border: "1px solid #e5e7eb",
+  },
+  paginationText: {
+    fontSize: "0.9rem",
+    color: "#475569",
+    fontWeight: 600,
   },
   paginationBtn: {
     padding: "0.5rem 1rem",
-    backgroundColor: "#f3f4f6",
+    backgroundColor: "#fff",
     border: "1px solid #d1d5db",
-    borderRadius: "4px",
+    borderRadius: "6px",
     cursor: "pointer",
     fontSize: "0.875rem",
+    fontWeight: 600,
+  },
+  paginationBtnDisabled: {
+    opacity: 0.6,
+    cursor: "not-allowed",
   },
   exportButton: {
     padding: "0.75rem 1.5rem",

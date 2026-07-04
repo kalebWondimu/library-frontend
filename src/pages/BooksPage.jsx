@@ -11,6 +11,8 @@ const BooksPage = () => {
   const [currentBook, setCurrentBook] = useState(null);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [genres, setGenres] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
   const [formData, setFormData] = useState({
     title: "",
     author: "",
@@ -33,6 +35,10 @@ const BooksPage = () => {
   }, []);
 
   // Filter books based on search
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
   useEffect(() => {
     if (searchQuery.trim() === "") {
       setFilteredBooks(books);
@@ -205,6 +211,18 @@ const BooksPage = () => {
     return copies > 0 ? "#10b981" : "#ef4444";
   };
 
+  const totalPages = Math.ceil(filteredBooks.length / itemsPerPage);
+  const paginatedBooks = filteredBooks.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(Math.max(1, totalPages));
+    }
+  }, [currentPage, totalPages]);
+
   return (
     <div style={styles.container}>
       {/* Header Section */}
@@ -239,70 +257,107 @@ const BooksPage = () => {
             📚 No books found. {searchQuery && "Try a different search."}
           </div>
         ) : (
-          filteredBooks.map((book) => (
-            <div key={book.id} style={styles.bookCard}>
-              <div style={styles.bookHeader}>
-                <h3 style={styles.bookTitle}>{book.title}</h3>
-                <div style={styles.bookActions}>
-                  <button
-                    style={styles.editButton}
-                    onClick={() => handleOpenModal(book)}
-                  >
-                    ✏️
-                  </button>
-                  {userRole === "admin" && (
+          <>
+            {paginatedBooks.map((book) => (
+              <div key={book.id} style={styles.bookCard}>
+                <div style={styles.bookHeader}>
+                  <h3 style={styles.bookTitle}>{book.title}</h3>
+                  <div style={styles.bookActions}>
                     <button
-                      style={styles.deleteButton}
-                      onClick={() => handleDeleteBook(book.id)}
+                      style={styles.editButton}
+                      onClick={() => handleOpenModal(book)}
                     >
-                      🗑️
+                      ✏️
                     </button>
-                  )}
+                    {userRole === "admin" && (
+                      <button
+                        style={styles.deleteButton}
+                        onClick={() => handleDeleteBook(book.id)}
+                      >
+                        🗑️
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              <p style={styles.bookAuthor}>by {book.author}</p>
+                <p style={styles.bookAuthor}>by {book.author}</p>
 
-              <div style={styles.bookStatus}>
-                <span
-                  style={{
-                    ...styles.statusBadge,
-                    backgroundColor: getStatusColor(book) + "20",
-                    color: getStatusColor(book),
-                  }}
-                >
-                  {getStatus(book)}
-                </span>
-              </div>
-
-              <div style={styles.bookDetails}>
-                {book.genre && (
-                  <div style={styles.detailRow}>
-                    <span style={styles.detailLabel}>Genre:</span>
-                    <span style={styles.detailValue}>
-                      {typeof book.genre === "object"
-                        ? book.genre.name
-                        : book.genre}
-                    </span>
-                  </div>
-                )}
-                {book.published_year && (
-                  <div style={styles.detailRow}>
-                    <span style={styles.detailLabel}>Published:</span>
-                    <span style={styles.detailValue}>
-                      {book.published_year}
-                    </span>
-                  </div>
-                )}
-                <div style={styles.detailRow}>
-                  <span style={styles.detailLabel}>Available Copies:</span>
-                  <span style={styles.detailValue}>
-                    {book.available_copies || 0}
+                <div style={styles.bookStatus}>
+                  <span
+                    style={{
+                      ...styles.statusBadge,
+                      backgroundColor: getStatusColor(book) + "20",
+                      color: getStatusColor(book),
+                    }}
+                  >
+                    {getStatus(book)}
                   </span>
                 </div>
+
+                <div style={styles.bookDetails}>
+                  {book.genre && (
+                    <div style={styles.detailRow}>
+                      <span style={styles.detailLabel}>Genre:</span>
+                      <span style={styles.detailValue}>
+                        {typeof book.genre === "object"
+                          ? book.genre.name
+                          : book.genre}
+                      </span>
+                    </div>
+                  )}
+                  {book.published_year && (
+                    <div style={styles.detailRow}>
+                      <span style={styles.detailLabel}>Published:</span>
+                      <span style={styles.detailValue}>
+                        {book.published_year}
+                      </span>
+                    </div>
+                  )}
+                  <div style={styles.detailRow}>
+                    <span style={styles.detailLabel}>Available Copies:</span>
+                    <span style={styles.detailValue}>
+                      {book.available_copies || 0}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))
+            ))}
+            {totalPages > 1 && (
+              <div style={styles.paginationBar}>
+                <button
+                  style={{
+                    ...styles.paginationButton,
+                    ...(currentPage === 1
+                      ? styles.paginationButtonDisabled
+                      : {}),
+                  }}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(1, prev - 1))
+                  }
+                  disabled={currentPage === 1}
+                >
+                  ← Previous
+                </button>
+                <span style={styles.paginationText}>
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  style={{
+                    ...styles.paginationButton,
+                    ...(currentPage === totalPages
+                      ? styles.paginationButtonDisabled
+                      : {}),
+                  }}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                >
+                  Next →
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -475,6 +530,35 @@ const styles = {
     top: "50%",
     transform: "translateY(-50%)",
     color: "#9ca3af",
+  },
+  paginationBar: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "0.75rem",
+    marginTop: "1rem",
+    padding: "0.9rem 1rem",
+    backgroundColor: "#f8fafc",
+    borderRadius: "10px",
+    border: "1px solid #e5e7eb",
+  },
+  paginationText: {
+    fontSize: "0.9rem",
+    color: "#475569",
+    fontWeight: 600,
+  },
+  paginationButton: {
+    border: "1px solid #d1d5db",
+    backgroundColor: "white",
+    color: "#374151",
+    padding: "0.55rem 0.95rem",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontWeight: 600,
+  },
+  paginationButtonDisabled: {
+    opacity: 0.6,
+    cursor: "not-allowed",
   },
   booksGrid: {
     display: "grid",
