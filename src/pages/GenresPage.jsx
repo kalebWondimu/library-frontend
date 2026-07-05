@@ -205,20 +205,20 @@ const GenresPage = () => {
                       onClick={() => handleOpenModal(genre)}
                       title="Edit Genre"
                     >
-                      ✏️ Edit
+                      ✎
                     </button>
                     <button
                       style={styles.deleteButton}
                       onClick={() => handleDeleteGenre(genre.id)}
                       title="Delete Genre"
                     >
-                      🗑️ Delete
+                      🗑
                     </button>
                   </div>
                 </div>
               </div>
             ))}
-            {totalPages > 1 && (
+            {filteredGenres.length > itemsPerPage && (
               <div style={styles.paginationBar}>
                 <button
                   style={{
@@ -524,7 +524,7 @@ const styles = {
     width: "90%",
     maxWidth: "500px",
     maxHeight: "90vh",
-    overflowY: "auto",
+    overflow: "hidden",
     boxShadow:
       "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
   },

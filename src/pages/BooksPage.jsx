@@ -8,7 +8,9 @@ const BooksPage = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [currentBook, setCurrentBook] = useState(null);
+  const [viewBook, setViewBook] = useState(null);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [genres, setGenres] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,6 +22,12 @@ const BooksPage = () => {
     available_copies: 1,
     genre_id: "",
   });
+
+  const actionIcons = {
+    edit: "✎",
+    delete: "🗑",
+    view: "👁",
+  };
 
   const [userRole, setUserRole] = useState(null);
 
@@ -148,6 +156,16 @@ const BooksPage = () => {
     });
   };
 
+  const handleOpenDetailsModal = (book) => {
+    setViewBook(book);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleCloseDetailsModal = () => {
+    setIsDetailsModalOpen(false);
+    setViewBook(null);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -264,17 +282,26 @@ const BooksPage = () => {
                   <h3 style={styles.bookTitle}>{book.title}</h3>
                   <div style={styles.bookActions}>
                     <button
+                      style={styles.viewButton}
+                      onClick={() => handleOpenDetailsModal(book)}
+                      title="View details"
+                    >
+                      {actionIcons.view}
+                    </button>
+                    <button
                       style={styles.editButton}
                       onClick={() => handleOpenModal(book)}
+                      title="Edit book"
                     >
-                      ✏️
+                      {actionIcons.edit}
                     </button>
                     {userRole === "admin" && (
                       <button
                         style={styles.deleteButton}
                         onClick={() => handleDeleteBook(book.id)}
+                        title="Delete book"
                       >
-                        🗑️
+                        {actionIcons.delete}
                       </button>
                     )}
                   </div>
@@ -322,7 +349,7 @@ const BooksPage = () => {
                 </div>
               </div>
             ))}
-            {totalPages > 1 && (
+            {filteredBooks.length > itemsPerPage && (
               <div style={styles.paginationBar}>
                 <button
                   style={{
@@ -470,6 +497,29 @@ const BooksPage = () => {
           </div>
         </div>
       )}
+
+      {isDetailsModalOpen && viewBook && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modal}>
+            <div style={styles.modalHeader}>
+              <h2 style={styles.modalTitle}>Book Details</h2>
+              <p style={styles.modalSubtitle}>Overview of the selected title</p>
+            </div>
+            <div style={styles.form}>
+              <div style={styles.detailSection}>
+                <div style={styles.detailRow}><span style={styles.detailLabel}>Title</span><span style={styles.detailValue}>{viewBook.title}</span></div>
+                <div style={styles.detailRow}><span style={styles.detailLabel}>Author</span><span style={styles.detailValue}>{viewBook.author}</span></div>
+                <div style={styles.detailRow}><span style={styles.detailLabel}>Genre</span><span style={styles.detailValue}>{typeof viewBook.genre === 'object' ? viewBook.genre.name : viewBook.genre}</span></div>
+                <div style={styles.detailRow}><span style={styles.detailLabel}>Published</span><span style={styles.detailValue}>{viewBook.published_year || '—'}</span></div>
+                <div style={styles.detailRow}><span style={styles.detailLabel}>Available Copies</span><span style={styles.detailValue}>{viewBook.available_copies || 0}</span></div>
+              </div>
+              <div style={styles.modalActions}>
+                <button type="button" style={styles.cancelButton} onClick={handleCloseDetailsModal}>Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -536,11 +586,13 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     gap: "0.75rem",
-    marginTop: "1rem",
-    padding: "0.9rem 1rem",
-    backgroundColor: "#f8fafc",
-    borderRadius: "10px",
+    marginTop: "1.5rem",
+    padding: "0.75rem 1rem",
+    backgroundColor: "#fff",
+    borderRadius: "999px",
     border: "1px solid #e5e7eb",
+    boxShadow: "0 4px 12px rgba(15, 23, 42, 0.06)",
+    gridColumn: "1 / -1",
   },
   paginationText: {
     fontSize: "0.9rem",
@@ -591,25 +643,35 @@ const styles = {
     display: "flex",
     gap: "0.5rem",
   },
-  editButton: {
-    background: "none",
-    border: "none",
-    fontSize: "1.25rem",
+  viewButton: {
+    background: "#eff6ff",
+    border: "1px solid #bfdbfe",
+    fontSize: "1rem",
     cursor: "pointer",
-    padding: "0.25rem",
-    borderRadius: "4px",
-    color: "#6b7280",
-    transition: "color 0.2s",
+    padding: "0.35rem 0.45rem",
+    borderRadius: "8px",
+    color: "#2563eb",
+    transition: "transform 0.2s, box-shadow 0.2s",
+  },
+  editButton: {
+    background: "#fef3c7",
+    border: "1px solid #fde68a",
+    fontSize: "1rem",
+    cursor: "pointer",
+    padding: "0.35rem 0.45rem",
+    borderRadius: "8px",
+    color: "#d97706",
+    transition: "transform 0.2s, box-shadow 0.2s",
   },
   deleteButton: {
-    background: "none",
-    border: "none",
-    fontSize: "1.25rem",
+    background: "#fef2f2",
+    border: "1px solid #fecaca",
+    fontSize: "1rem",
     cursor: "pointer",
-    padding: "0.25rem",
-    borderRadius: "4px",
-    color: "#ef4444",
-    transition: "color 0.2s",
+    padding: "0.35rem 0.45rem",
+    borderRadius: "8px",
+    color: "#dc2626",
+    transition: "transform 0.2s, box-shadow 0.2s",
   },
   bookAuthor: {
     fontSize: "0.875rem",
@@ -679,7 +741,7 @@ const styles = {
     width: "90%",
     maxWidth: "500px",
     maxHeight: "90vh",
-    overflowY: "auto",
+    overflow: "hidden",
     boxShadow:
       "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
   },
@@ -703,6 +765,11 @@ const styles = {
   },
   formGroup: {
     marginBottom: "1.25rem",
+  },
+  detailSection: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "0.75rem",
   },
   label: {
     display: "block",

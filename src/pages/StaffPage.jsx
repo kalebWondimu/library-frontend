@@ -340,16 +340,18 @@ const StaffPage = () => {
                 <button
                   style={styles.editButton}
                   onClick={() => handleOpenModal(staff)}
+                  title="Edit staff"
                 >
-                  ✏️ Edit
+                  ✎
                 </button>
 
                 {staff.username !== "admin" && (
                   <button
                     style={styles.deleteButton}
                     onClick={() => handleDeleteStaff(staff.id, staff.username)}
+                    title="Delete staff"
                   >
-                    🗑️ Delete
+                    🗑
                   </button>
                 )}
               </div>
@@ -601,11 +603,12 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     gap: "0.75rem",
-    marginTop: "1rem",
-    padding: "0.9rem 1rem",
-    backgroundColor: "#f8fafc",
-    borderRadius: "10px",
+    marginTop: "1.5rem",
+    padding: "0.75rem 1rem",
+    backgroundColor: "#fff",
+    borderRadius: "999px",
     border: "1px solid #e5e7eb",
+    boxShadow: "0 4px 12px rgba(15, 23, 42, 0.06)",
     gridColumn: "1 / -1",
   },
   paginationText: {
@@ -706,30 +709,30 @@ const styles = {
     marginTop: "auto",
   },
   editButton: {
-    backgroundColor: "#3b82f6",
-    color: "white",
-    border: "none",
-    padding: "0.5rem 1rem",
-    borderRadius: "6px",
-    fontSize: "0.875rem",
+    backgroundColor: "#eff6ff",
+    color: "#2563eb",
+    border: "1px solid #bfdbfe",
+    padding: "0.45rem 0.6rem",
+    borderRadius: "8px",
+    fontSize: "1rem",
     fontWeight: "500",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
-    gap: "0.5rem",
+    justifyContent: "center",
   },
   deleteButton: {
-    backgroundColor: "#ef4444",
-    color: "white",
-    border: "none",
-    padding: "0.5rem 1rem",
-    borderRadius: "6px",
-    fontSize: "0.875rem",
+    backgroundColor: "#fef2f2",
+    color: "#dc2626",
+    border: "1px solid #fecaca",
+    padding: "0.45rem 0.6rem",
+    borderRadius: "8px",
+    fontSize: "1rem",
     fontWeight: "500",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
-    gap: "0.5rem",
+    justifyContent: "center",
   },
   loading: {
     textAlign: "center",
@@ -763,7 +766,7 @@ const styles = {
     width: "90%",
     maxWidth: "500px",
     maxHeight: "90vh",
-    overflowY: "auto",
+    overflow: "hidden",
     boxShadow:
       "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
   },

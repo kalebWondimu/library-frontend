@@ -20,6 +20,10 @@ const MembersPage = () => {
     email: "",
     phone: "",
   });
+  const storedUser =
+    typeof window !== "undefined" ? localStorage.getItem("user") : null;
+  const currentUser = storedUser ? JSON.parse(storedUser) : null;
+  const userRole = currentUser?.role;
 
   useEffect(() => {
     fetchMembers();
@@ -162,9 +166,16 @@ const MembersPage = () => {
           <h1 style={styles.title}>Members</h1>
           <p style={styles.subtitle}>Manage library members</p>
         </div>
-        <button style={styles.addButton} onClick={() => handleOpenModal(null)}>
-          + Add Member
-        </button>
+        {(userRole === "admin" ||
+          userRole === "super-admin" ||
+          userRole === "librarian") && (
+          <button
+            style={styles.addButton}
+            onClick={() => handleOpenModal(null)}
+          >
+            + Add Member
+          </button>
+        )}
       </div>
 
       <div style={styles.searchContainer}>
@@ -194,13 +205,17 @@ const MembersPage = () => {
                     {member.name || "Unnamed Member"}
                   </h3>
                   <div style={styles.memberActions}>
-                    <button
-                      title="Edit Member"
-                      style={styles.actionButton}
-                      onClick={() => handleOpenModal(member)}
-                    >
-                      ✏️
-                    </button>
+                    {(userRole === "admin" ||
+                      userRole === "super-admin" ||
+                      userRole === "librarian") && (
+                      <button
+                        title="Edit Member"
+                        style={styles.actionButton}
+                        onClick={() => handleOpenModal(member)}
+                      >
+                        ✏️
+                      </button>
+                    )}
 
                     <button
                       title="View Borrow History"
@@ -210,13 +225,15 @@ const MembersPage = () => {
                       📚
                     </button>
 
-                    <button
-                      title="Delete Member"
-                      style={styles.deleteButton}
-                      onClick={() => handleDeleteMember(member.id)}
-                    >
-                      🗑️
-                    </button>
+                    {(userRole === "admin" || userRole === "super-admin") && (
+                      <button
+                        title="Delete Member"
+                        style={styles.deleteButton}
+                        onClick={() => handleDeleteMember(member.id)}
+                      >
+                        🗑️
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -251,7 +268,7 @@ const MembersPage = () => {
                 </div>
               </div>
             ))}
-            {totalPages > 1 && (
+            {filteredMembers.length > itemsPerPage && (
               <div style={styles.paginationBar}>
                 <button
                   style={{
@@ -443,7 +460,7 @@ const MembersPage = () => {
                 })
               )}
 
-              {totalHistoryPages > 1 && (
+              {borrowHistory.length > historyItemsPerPage && (
                 <div style={styles.paginationBar}>
                   <button
                     style={{
@@ -579,6 +596,15 @@ const styles = {
     display: "flex",
     gap: "0.5rem",
   },
+  actionButton: {
+    backgroundColor: "#eff6ff",
+    border: "1px solid #bfdbfe",
+    fontSize: "1rem",
+    cursor: "pointer",
+    padding: "0.35rem 0.5rem",
+    borderRadius: "8px",
+    color: "#2563eb",
+  },
   deleteButton: {
     backgroundColor: "#f3f4f6",
     border: "none",
@@ -620,6 +646,36 @@ const styles = {
     color: "#111827",
     fontWeight: "500",
   },
+  paginationBar: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "0.75rem",
+    marginTop: "1.5rem",
+    padding: "0.75rem 1rem",
+    backgroundColor: "#fff",
+    borderRadius: "999px",
+    border: "1px solid #e5e7eb",
+    boxShadow: "0 4px 12px rgba(15, 23, 42, 0.06)",
+  },
+  paginationText: {
+    fontSize: "0.9rem",
+    color: "#475569",
+    fontWeight: 600,
+  },
+  paginationButton: {
+    border: "1px solid #d1d5db",
+    backgroundColor: "white",
+    color: "#374151",
+    padding: "0.55rem 0.95rem",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontWeight: 600,
+  },
+  paginationButtonDisabled: {
+    opacity: 0.6,
+    cursor: "not-allowed",
+  },
   loading: {
     textAlign: "center",
     padding: "3rem",
@@ -650,7 +706,7 @@ const styles = {
     width: "90%",
     maxWidth: "500px",
     maxHeight: "90vh",
-    overflowY: "auto",
+    overflow: "hidden",
     boxShadow:
       "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
   },

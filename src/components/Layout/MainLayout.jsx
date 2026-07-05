@@ -4,6 +4,8 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [user, setUser] = useState(null);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [profilePanelOpen, setProfilePanelOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -73,8 +75,14 @@ const MainLayout = () => {
           ];
 
   const handleLogout = () => {
+    setProfileMenuOpen(false);
     localStorage.clear();
     navigate("/login", { replace: true });
+  };
+
+  const handleOpenProfilePanel = () => {
+    setProfileMenuOpen(false);
+    setProfilePanelOpen(true);
   };
 
   const activePage =
@@ -102,9 +110,6 @@ const MainLayout = () => {
               </Link>
             ))}
           </nav>
-          <button style={styles.logoutButton} onClick={handleLogout}>
-            Logout
-          </button>
         </aside>
       )}
 
@@ -120,18 +125,39 @@ const MainLayout = () => {
             <h1 style={styles.pageTitle}>{activePage}</h1>
           </div>
 
-          <div style={styles.profileCard}>
-            <div style={styles.profileAvatar}>
-              {(user.username || "U").charAt(0).toUpperCase()}
-            </div>
-            <div style={styles.profileText}>
-              <div style={styles.profileName}>
-                Welcome, {user.username || "User"}
+          <div style={styles.profileWrapper}>
+            <button
+              style={styles.profileCard}
+              onClick={() => setProfileMenuOpen((prev) => !prev)}
+            >
+              <div style={styles.profileAvatar}>
+                {(user.username || "U").charAt(0).toUpperCase()}
               </div>
-              <div style={styles.profileRole}>
-                {formatRole(user.role || "")}
+              <div style={styles.profileText}>
+                <div style={styles.profileName}>
+                  Welcome, {user.username || "User"}
+                </div>
+                <div style={styles.profileRole}>
+                  {formatRole(user.role || "")}
+                </div>
               </div>
-            </div>
+            </button>
+
+            {profileMenuOpen && (
+              <div style={styles.profileDropdown}>
+                <button
+                  style={styles.dropdownItem}
+                  onClick={handleOpenProfilePanel}
+                >
+                  <span style={styles.dropdownIcon}>👤</span>
+                  Profile
+                </button>
+                <button style={styles.dropdownItem} onClick={handleLogout}>
+                  <span style={styles.dropdownIcon}>↪</span>
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -139,12 +165,67 @@ const MainLayout = () => {
           <Outlet />
         </div>
       </div>
+
+      {profilePanelOpen && (
+        <div
+          style={styles.profilePanelOverlay}
+          onClick={() => setProfilePanelOpen(false)}
+        >
+          <div style={styles.profilePanel} onClick={(e) => e.stopPropagation()}>
+            <div style={styles.profilePanelHeader}>
+              <div>
+                <h2 style={styles.profilePanelTitle}>Profile Details</h2>
+                <p style={styles.profilePanelSubtitle}>Account overview</p>
+              </div>
+              <button
+                style={styles.closePanelButton}
+                onClick={() => setProfilePanelOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={styles.profilePanelBody}>
+              <div style={styles.profilePanelAvatar}>
+                {(user.username || "U").charAt(0).toUpperCase()}
+              </div>
+              <div style={styles.profilePanelRow}>
+                <span style={styles.profilePanelLabel}>Username</span>
+                <span style={styles.profilePanelValue}>
+                  {user.username || "User"}
+                </span>
+              </div>
+              <div style={styles.profilePanelRow}>
+                <span style={styles.profilePanelLabel}>Email</span>
+                <span style={styles.profilePanelValue}>
+                  {user.email || "No email provided"}
+                </span>
+              </div>
+              <div style={styles.profilePanelRow}>
+                <span style={styles.profilePanelLabel}>Role</span>
+                <span style={styles.profilePanelValue}>
+                  {formatRole(user.role || "")}
+                </span>
+              </div>
+              <div style={styles.profilePanelRow}>
+                <span style={styles.profilePanelLabel}>Status</span>
+                <span style={styles.profilePanelValue}>Active</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 const styles = {
-  container: { display: "flex", minHeight: "100vh", background: "#f3f4f6" },
+  container: {
+    display: "flex",
+    minHeight: "100vh",
+    background: "#f3f4f6",
+    overflowX: "hidden",
+  },
   sidebar: {
     width: 280,
     background: "#1f2937",
@@ -174,16 +255,6 @@ const styles = {
   },
   navLinkActive: { background: "#374151", color: "#fff", fontWeight: 600 },
   icon: { marginRight: 8 },
-  logoutButton: {
-    marginTop: 8,
-    padding: "0.75rem 1rem",
-    background: "#ef4444",
-    color: "#fff",
-    border: "none",
-    borderRadius: 6,
-    cursor: "pointer",
-    fontWeight: 600,
-  },
   main: {
     flex: 1,
     transition: "margin-left 0.3s",
@@ -202,7 +273,7 @@ const styles = {
     boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
     position: "sticky",
     top: 0,
-    zIndex: 10,
+    zIndex: 20,
   },
   topBarLeft: {
     display: "flex",
@@ -217,6 +288,9 @@ const styles = {
     cursor: "pointer",
   },
   pageTitle: { fontSize: "1.25rem", fontWeight: 600, margin: 0 },
+  profileWrapper: {
+    position: "relative",
+  },
   profileCard: {
     display: "flex",
     alignItems: "center",
@@ -225,6 +299,7 @@ const styles = {
     border: "1px solid #e2e8f0",
     borderRadius: 999,
     padding: "0.5rem 0.9rem",
+    cursor: "pointer",
   },
   profileAvatar: {
     width: 38,
@@ -237,14 +312,105 @@ const styles = {
     justifyContent: "center",
     fontWeight: 700,
   },
-  profileText: { display: "flex", flexDirection: "column" },
+  profileText: { display: "flex", flexDirection: "column", textAlign: "left" },
   profileName: { fontSize: "0.95rem", fontWeight: 600, color: "#111827" },
   profileRole: {
     fontSize: "0.8rem",
     color: "#64748b",
     textTransform: "capitalize",
   },
+  profileDropdown: {
+    position: "absolute",
+    right: 0,
+    top: "calc(100% + 0.5rem)",
+    background: "#fff",
+    borderRadius: 12,
+    border: "1px solid #e5e7eb",
+    boxShadow: "0 10px 25px rgba(15, 23, 42, 0.12)",
+    minWidth: 160,
+    zIndex: 30,
+    overflow: "hidden",
+  },
+  dropdownItem: {
+    width: "100%",
+    border: "none",
+    background: "#fff",
+    padding: "0.75rem 0.9rem",
+    display: "flex",
+    alignItems: "center",
+    gap: "0.6rem",
+    cursor: "pointer",
+    color: "#111827",
+    fontWeight: 500,
+  },
+  dropdownIcon: { fontSize: "0.95rem" },
   content: { flex: 1, padding: "1.5rem", background: "#f3f4f6" },
+  profilePanelOverlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(15, 23, 42, 0.45)",
+    zIndex: 40,
+    display: "flex",
+    justifyContent: "flex-end",
+  },
+  profilePanel: {
+    width: "min(420px, 100%)",
+    height: "100%",
+    background: "#fff",
+    boxShadow: "-10px 0 35px rgba(15, 23, 42, 0.2)",
+    display: "flex",
+    flexDirection: "column",
+  },
+  profilePanelHeader: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "1.25rem 1.5rem",
+    borderBottom: "1px solid #e5e7eb",
+  },
+  profilePanelTitle: { margin: 0, fontSize: "1.15rem" },
+  profilePanelSubtitle: {
+    margin: "0.2rem 0 0",
+    color: "#64748b",
+    fontSize: "0.9rem",
+  },
+  closePanelButton: {
+    border: "none",
+    background: "#f3f4f6",
+    borderRadius: "50%",
+    width: 36,
+    height: 36,
+    cursor: "pointer",
+    fontSize: "1rem",
+  },
+  profilePanelBody: {
+    padding: "1.5rem",
+    display: "flex",
+    flexDirection: "column",
+    gap: "1rem",
+  },
+  profilePanelAvatar: {
+    width: 80,
+    height: 80,
+    borderRadius: "50%",
+    background: "linear-gradient(135deg, #4f46e5, #2563eb)",
+    color: "#fff",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "1.8rem",
+    fontWeight: 700,
+    marginBottom: "0.5rem",
+  },
+  profilePanelRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: "1rem",
+    borderBottom: "1px solid #e5e7eb",
+    paddingBottom: "0.75rem",
+  },
+  profilePanelLabel: { color: "#64748b", fontWeight: 600 },
+  profilePanelValue: { color: "#111827", fontWeight: 600, textAlign: "right" },
 };
 
 export default MainLayout;
