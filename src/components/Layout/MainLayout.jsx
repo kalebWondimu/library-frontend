@@ -5,7 +5,6 @@ const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [user, setUser] = useState(null);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const [profilePanelOpen, setProfilePanelOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -47,6 +46,7 @@ const MainLayout = () => {
           { icon: "👥", label: "Members", path: `${base}/members` },
           { icon: "👨‍💼", label: "Staff", path: `${base}/staff` },
           { icon: "📈", label: "Reports", path: `${base}/reports` },
+          { icon: "👤", label: "Profile", path: `${base}/profile` },
           { icon: "🏷️", label: "Genres", path: `${base}/genres` },
         ]
       : user.role === "admin"
@@ -61,6 +61,7 @@ const MainLayout = () => {
             { icon: "👥", label: "Members", path: `${base}/members` },
             { icon: "👨‍💼", label: "Staff", path: `${base}/staff` },
             { icon: "📈", label: "Reports", path: `${base}/reports` },
+            { icon: "👤", label: "Profile", path: `${base}/profile` },
             { icon: "🏷️", label: "Genres", path: `${base}/genres` },
           ]
         : [
@@ -72,6 +73,7 @@ const MainLayout = () => {
               path: `${base}/borrow-return`,
             },
             { icon: "👥", label: "Members", path: `${base}/members` },
+            { icon: "👤", label: "Profile", path: `${base}/profile` },
           ];
 
   const handleLogout = () => {
@@ -82,7 +84,7 @@ const MainLayout = () => {
 
   const handleOpenProfilePanel = () => {
     setProfileMenuOpen(false);
-    setProfilePanelOpen(true);
+    navigate(`${base}/profile`);
   };
 
   const activePage =
@@ -165,56 +167,6 @@ const MainLayout = () => {
           <Outlet />
         </div>
       </div>
-
-      {profilePanelOpen && (
-        <div
-          style={styles.profilePanelOverlay}
-          onClick={() => setProfilePanelOpen(false)}
-        >
-          <div style={styles.profilePanel} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.profilePanelHeader}>
-              <div>
-                <h2 style={styles.profilePanelTitle}>Profile Details</h2>
-                <p style={styles.profilePanelSubtitle}>Account overview</p>
-              </div>
-              <button
-                style={styles.closePanelButton}
-                onClick={() => setProfilePanelOpen(false)}
-              >
-                ✕
-              </button>
-            </div>
-
-            <div style={styles.profilePanelBody}>
-              <div style={styles.profilePanelAvatar}>
-                {(user.username || "U").charAt(0).toUpperCase()}
-              </div>
-              <div style={styles.profilePanelRow}>
-                <span style={styles.profilePanelLabel}>Username</span>
-                <span style={styles.profilePanelValue}>
-                  {user.username || "User"}
-                </span>
-              </div>
-              <div style={styles.profilePanelRow}>
-                <span style={styles.profilePanelLabel}>Email</span>
-                <span style={styles.profilePanelValue}>
-                  {user.email || "No email provided"}
-                </span>
-              </div>
-              <div style={styles.profilePanelRow}>
-                <span style={styles.profilePanelLabel}>Role</span>
-                <span style={styles.profilePanelValue}>
-                  {formatRole(user.role || "")}
-                </span>
-              </div>
-              <div style={styles.profilePanelRow}>
-                <span style={styles.profilePanelLabel}>Status</span>
-                <span style={styles.profilePanelValue}>Active</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

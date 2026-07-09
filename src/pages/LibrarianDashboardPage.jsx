@@ -5,6 +5,7 @@ import { borrowingService } from "../services/borrowingService";
 import { toast } from "react-hot-toast";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { commonStyles } from "../styles/commonStyles";
 
 const LibrarianDashboardPage = () => {
   const [stats, setStats] = useState({
@@ -74,6 +75,7 @@ const LibrarianDashboardPage = () => {
       label: "Borrow Book",
       icon: "📥",
       path: "/borrow-return",
+      query: "openForm=borrow",
       color: "#3b82f6",
       description: "Process book borrowing",
     },
@@ -81,6 +83,7 @@ const LibrarianDashboardPage = () => {
       label: "Return Book",
       icon: "📤",
       path: "/borrow-return",
+      query: "openForm=return",
       color: "#10b981",
       description: "Process book returns",
     },
@@ -88,6 +91,7 @@ const LibrarianDashboardPage = () => {
       label: "Add Book",
       icon: "📚",
       path: "/books",
+      query: "openForm=add",
       color: "#f59e0b",
       description: "Add new books to catalog",
     },
@@ -192,7 +196,7 @@ const LibrarianDashboardPage = () => {
             <button
               key={index}
               style={styles.quickActionButton}
-              onClick={() => handleQuickAction(action.path)}
+              onClick={() => handleQuickAction(action)}
             >
               <div style={styles.quickActionIcon}>{action.icon}</div>
               <div style={styles.quickActionLabel}>{action.label}</div>
@@ -253,8 +257,8 @@ const styles = {
     marginBottom: "0.5rem",
   },
   welcomeTitle: {
+    ...commonStyles.title,
     fontSize: "1.5rem",
-    fontWeight: "600",
     margin: "0",
   },
   librarianBadge: {
@@ -266,7 +270,7 @@ const styles = {
     fontWeight: "600",
   },
   welcomeSubtitle: {
-    color: "#6b7280",
+    ...commonStyles.subtitle,
     margin: "0 0 1rem 0",
   },
   librarianAccessNote: {
@@ -311,9 +315,7 @@ const styles = {
     boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
   },
   sectionTitle: {
-    fontSize: "1.125rem",
-    fontWeight: "600",
-    margin: "0 0 0.5rem 0",
+    ...commonStyles.sectionTitle,
   },
   sectionSubtitle: {
     color: "#6b7280",

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { memberService } from "../services/memberService";
+import { commonStyles } from "../styles/commonStyles";
 
 const MembersPage = () => {
   const [members, setMembers] = useState([]);
@@ -20,6 +22,7 @@ const MembersPage = () => {
     email: "",
     phone: "",
   });
+  const location = useLocation();
   const storedUser =
     typeof window !== "undefined" ? localStorage.getItem("user") : null;
   const currentUser = storedUser ? JSON.parse(storedUser) : null;
@@ -28,6 +31,13 @@ const MembersPage = () => {
   useEffect(() => {
     fetchMembers();
   }, []);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get("openForm") === "add") {
+      handleOpenModal(null);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -517,56 +527,34 @@ const MembersPage = () => {
 //styles
 const styles = {
   container: {
-    padding: "1rem",
+    ...commonStyles.container,
   },
   header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "2rem",
+    ...commonStyles.header,
   },
   headerLeft: {
-    flex: 1,
+    ...commonStyles.headerLeft,
   },
   title: {
-    fontSize: "1.875rem",
-    fontWeight: "600",
-    color: "#111827",
-    margin: "0 0 0.5rem 0",
+    ...commonStyles.title,
   },
   subtitle: {
-    fontSize: "0.875rem",
-    color: "#6b7280",
-    margin: "0",
+    ...commonStyles.subtitle,
   },
   addButton: {
-    backgroundColor: "#4f46e5",
-    color: "white",
-    border: "none",
-    padding: "0.625rem 1.25rem",
-    borderRadius: "8px",
-    fontSize: "0.875rem",
-    fontWeight: "500",
-    cursor: "pointer",
+    ...commonStyles.addButton,
   },
   searchContainer: {
-    position: "relative",
+    ...commonStyles.searchContainer,
     marginBottom: "2rem",
   },
   searchInput: {
-    width: "100%",
-    boxSizing: "border-box",
-    padding: "0.75rem 1rem 0.75rem 3rem",
+    ...commonStyles.searchInput,
     fontSize: "0.875rem",
-    border: "1px solid #d1d5db",
     borderRadius: "8px",
   },
   searchIcon: {
-    position: "absolute",
-    left: "1rem",
-    top: "50%",
-    transform: "translateY(-50%)",
-    color: "#9ca3af",
+    ...commonStyles.searchIcon,
   },
   membersList: {
     display: "flex",
@@ -647,11 +635,7 @@ const styles = {
     fontWeight: "500",
   },
   paginationBar: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "0.75rem",
-    marginTop: "1.5rem",
+    ...commonStyles.paginationBar,
     padding: "0.75rem 1rem",
     backgroundColor: "#fff",
     borderRadius: "999px",
@@ -659,22 +643,15 @@ const styles = {
     boxShadow: "0 4px 12px rgba(15, 23, 42, 0.06)",
   },
   paginationText: {
-    fontSize: "0.9rem",
-    color: "#475569",
-    fontWeight: 600,
+    ...commonStyles.paginationText,
   },
   paginationButton: {
-    border: "1px solid #d1d5db",
-    backgroundColor: "white",
-    color: "#374151",
+    ...commonStyles.paginationButton,
     padding: "0.55rem 0.95rem",
     borderRadius: "8px",
-    cursor: "pointer",
-    fontWeight: 600,
   },
   paginationButtonDisabled: {
-    opacity: 0.6,
-    cursor: "not-allowed",
+    ...commonStyles.paginationButtonDisabled,
   },
   loading: {
     textAlign: "center",

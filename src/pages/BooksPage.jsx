@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { bookService } from "../services/bookService";
 import { genreService } from "../services/genreService";
+import { commonStyles } from "../styles/commonStyles";
 
 const BooksPage = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const location = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [currentBook, setCurrentBook] = useState(null);
@@ -42,6 +45,13 @@ const BooksPage = () => {
     fetchGenres();
   }, []);
 
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get("openForm") === "add") {
+      handleOpenModal();
+    }
+  }, [location.search]);
+
   // Filter books based on search
   useEffect(() => {
     setCurrentPage(1);
@@ -55,11 +65,13 @@ const BooksPage = () => {
         const title = book.title?.toLowerCase() || "";
         const author = book.author?.toLowerCase() || "";
         const genre = book.genre?.name?.toLowerCase() || "";
+        const year = String(book.published_year || "");
 
         return (
           title.includes(searchQuery.toLowerCase()) ||
           author.includes(searchQuery.toLowerCase()) ||
-          genre.includes(searchQuery.toLowerCase())
+          genre.includes(searchQuery.toLowerCase()) ||
+          year.includes(searchQuery.toLowerCase())
         );
       });
       setFilteredBooks(filtered);
@@ -213,7 +225,9 @@ const BooksPage = () => {
       } catch (error) {
         const msg =
           error.response?.data?.message ||
-          "This book cannot be deleted because it has borrow history.";
+          (error.response?.status === 500
+            ? "Unable to delete this book right now. It may have related borrow history."
+            : "This book cannot be deleted because it has borrow history.");
         toast.error(msg);
       }
     }
@@ -507,14 +521,43 @@ const BooksPage = () => {
             </div>
             <div style={styles.form}>
               <div style={styles.detailSection}>
-                <div style={styles.detailRow}><span style={styles.detailLabel}>Title</span><span style={styles.detailValue}>{viewBook.title}</span></div>
-                <div style={styles.detailRow}><span style={styles.detailLabel}>Author</span><span style={styles.detailValue}>{viewBook.author}</span></div>
-                <div style={styles.detailRow}><span style={styles.detailLabel}>Genre</span><span style={styles.detailValue}>{typeof viewBook.genre === 'object' ? viewBook.genre.name : viewBook.genre}</span></div>
-                <div style={styles.detailRow}><span style={styles.detailLabel}>Published</span><span style={styles.detailValue}>{viewBook.published_year || '—'}</span></div>
-                <div style={styles.detailRow}><span style={styles.detailLabel}>Available Copies</span><span style={styles.detailValue}>{viewBook.available_copies || 0}</span></div>
+                <div style={styles.detailRow}>
+                  <span style={styles.detailLabel}>Title</span>
+                  <span style={styles.detailValue}>{viewBook.title}</span>
+                </div>
+                <div style={styles.detailRow}>
+                  <span style={styles.detailLabel}>Author</span>
+                  <span style={styles.detailValue}>{viewBook.author}</span>
+                </div>
+                <div style={styles.detailRow}>
+                  <span style={styles.detailLabel}>Genre</span>
+                  <span style={styles.detailValue}>
+                    {typeof viewBook.genre === "object"
+                      ? viewBook.genre.name
+                      : viewBook.genre}
+                  </span>
+                </div>
+                <div style={styles.detailRow}>
+                  <span style={styles.detailLabel}>Published</span>
+                  <span style={styles.detailValue}>
+                    {viewBook.published_year || "—"}
+                  </span>
+                </div>
+                <div style={styles.detailRow}>
+                  <span style={styles.detailLabel}>Available Copies</span>
+                  <span style={styles.detailValue}>
+                    {viewBook.available_copies || 0}
+                  </span>
+                </div>
               </div>
               <div style={styles.modalActions}>
-                <button type="button" style={styles.cancelButton} onClick={handleCloseDetailsModal}>Close</button>
+                <button
+                  type="button"
+                  style={styles.cancelButton}
+                  onClick={handleCloseDetailsModal}
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>
@@ -526,27 +569,19 @@ const BooksPage = () => {
 //styles
 const styles = {
   container: {
-    padding: "1rem",
+    ...commonStyles.container,
   },
   header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "2rem",
+    ...commonStyles.header,
   },
   headerLeft: {
-    flex: 1,
+    ...commonStyles.headerLeft,
   },
   title: {
-    fontSize: "1.875rem",
-    fontWeight: "600",
-    color: "#111827",
-    margin: "0 0 0.5rem 0",
+    ...commonStyles.title,
   },
   subtitle: {
-    fontSize: "0.875rem",
-    color: "#6b7280",
-    margin: "0",
+    ...commonStyles.subtitle,
   },
   addButton: {
     backgroundColor: "#4f46e5",
@@ -561,22 +596,62 @@ const styles = {
     whiteSpace: "nowrap",
   },
   searchContainer: {
-    position: "relative",
-    marginBottom: "2rem",
+    ...commonStyles.searchContainer,
   },
   searchInput: {
-    width: "100%",
-    boxSizing: "border-box",
-    padding: "0.75rem 1rem 0.75rem 3rem",
-    fontSize: "0.875rem",
-    border: "1px solid #d1d5db",
-    borderRadius: "8px",
-    outline: "none",
-    transition: "border-color 0.2s",
+    ...commonStyles.searchInput,
   },
   searchIcon: {
-    position: "absolute",
-    left: "1rem",
+    ...commonStyles.searchIcon,
+  },
+  modalOverlay: {
+    ...commonStyles.modalOverlay,
+  },
+  modal: {
+    ...commonStyles.modal,
+  },
+  modalHeader: {
+    ...commonStyles.modalHeader,
+  },
+  modalTitle: {
+    ...commonStyles.modalTitle,
+  },
+  modalSubtitle: {
+    ...commonStyles.modalSubtitle,
+  },
+  form: {
+    ...commonStyles.form,
+  },
+  formGroup: {
+    ...commonStyles.formGroup,
+  },
+  label: {
+    ...commonStyles.label,
+  },
+  input: {
+    ...commonStyles.input,
+  },
+  modalActions: {
+    ...commonStyles.modalActions,
+  },
+  cancelButton: {
+    ...commonStyles.cancelButton,
+  },
+  submitButton: {
+    ...commonStyles.submitButton,
+  },
+  paginationBar: {
+    ...commonStyles.paginationBar,
+  },
+  paginationButton: {
+    ...commonStyles.paginationButton,
+  },
+  paginationButtonDisabled: {
+    ...commonStyles.paginationButtonDisabled,
+  },
+  paginationText: {
+    ...commonStyles.paginationText,
+  },
     top: "50%",
     transform: "translateY(-50%)",
     color: "#9ca3af",

@@ -11,6 +11,7 @@ import MembersPage from './pages/MembersPage';
 import GenresPage from './pages/GenresPage';
 import StaffPage from './pages/StaffPage';
 import ReportsPage from './pages/ReportsPage';
+import ProfilePage from './pages/ProfilePage';
 import MainLayout from './components/Layout/MainLayout';
 
 const isAuthenticated = () => !!localStorage.getItem('token');
@@ -69,8 +70,7 @@ function App() {
           <Route path="borrow-return" element={<BorrowReturnPage />} />
           <Route path="members" element={<MembersPage />} />
           <Route path="staff" element={<StaffPage />} />
-          <Route path="reports" element={<ReportsPage />} />
-          <Route path="genres" element={<GenresPage />} />
+          <Route path="reports" element={<ReportsPage />} />          <Route path="profile" element={<ProfilePage />} />          <Route path="genres" element={<GenresPage />} />
         </Route>
 
         <Route
@@ -84,8 +84,7 @@ function App() {
           <Route path="dashboard" element={<LibrarianDashboardPage />} />
           <Route path="books" element={<BooksPage />} />
           <Route path="borrow-return" element={<BorrowReturnPage />} />
-          <Route path="members" element={<MembersPage />} />
-        </Route>
+          <Route path="members" element={<MembersPage />} />          <Route path="profile" element={<ProfilePage />} />        </Route>
 
         <Route path="*" element={<Navigate to="/" />} />
 

@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { borrowingService } from "../services/borrowingService";
 import { bookService } from "../services/bookService";
 import { memberService } from "../services/memberService";
 import Select from "react-select";
+import { commonStyles } from "../styles/commonStyles";
 
 const BorrowReturnPage = () => {
+  const location = useLocation();
   const [borrowRecords, setBorrowRecords] = useState([]);
   const [books, setBooks] = useState([]);
   const [members, setMembers] = useState([]);
@@ -36,6 +39,16 @@ const BorrowReturnPage = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const openForm = searchParams.get("openForm");
+    if (openForm === "borrow") {
+      handleOpenBorrowModal();
+    } else if (openForm === "return") {
+      handleOpenReturnModal();
+    }
+  }, [location.search]);
 
   const fetchData = async () => {
     try {
@@ -85,7 +98,7 @@ const BorrowReturnPage = () => {
     .filter((book) => book.available_copies > 0)
     .map((book) => ({
       value: book.id,
-      label: `${book.title} by ${book.author} (${book.available_copies} available)`,
+      label: `${book.title} by ${book.author} — ${book.available_copies} available`,
     }));
 
   const memberOptions = members.map((member) => ({
@@ -209,7 +222,9 @@ const BorrowReturnPage = () => {
   };
 
   const handleDeleteRecord = async (recordId) => {
-    if (!window.confirm("Are you sure you want to delete this borrow record?")) {
+    if (
+      !window.confirm("Are you sure you want to delete this borrow record?")
+    ) {
       return;
     }
 
@@ -424,6 +439,9 @@ const BorrowReturnPage = () => {
                   placeholder="Search and select book..."
                   isSearchable
                   styles={selectStyles}
+                  menuPlacement="auto"
+                  maxMenuHeight={220}
+                  components={{ IndicatorSeparator: () => null }}
                 />
               </div>
 
@@ -443,6 +461,9 @@ const BorrowReturnPage = () => {
                   placeholder="Search and select member..."
                   isSearchable
                   styles={selectStyles}
+                  menuPlacement="auto"
+                  maxMenuHeight={220}
+                  components={{ IndicatorSeparator: () => null }}
                 />
               </div>
 
@@ -509,6 +530,9 @@ const BorrowReturnPage = () => {
                   placeholder="Search borrow record..."
                   isSearchable
                   styles={selectStyles}
+                  menuPlacement="auto"
+                  maxMenuHeight={220}
+                  components={{ IndicatorSeparator: () => null }}
                 />
               </div>
 
@@ -555,14 +579,47 @@ const BorrowReturnPage = () => {
             </div>
             <div style={styles.form}>
               <div style={styles.detailSection}>
-                <div style={styles.detailRow}><span style={styles.detailLabel}>Book</span><span style={styles.detailValue}>{getBookById(selectedRecord.book_id)?.title || 'Unknown'}</span></div>
-                <div style={styles.detailRow}><span style={styles.detailLabel}>Member</span><span style={styles.detailValue}>{getMemberById(selectedRecord.member_id)?.name || 'Unknown'}</span></div>
-                <div style={styles.detailRow}><span style={styles.detailLabel}>Borrowed</span><span style={styles.detailValue}>{formatDate(selectedRecord.borrow_date)}</span></div>
-                <div style={styles.detailRow}><span style={styles.detailLabel}>Due</span><span style={styles.detailValue}>{formatDate(selectedRecord.due_date)}</span></div>
-                <div style={styles.detailRow}><span style={styles.detailLabel}>Returned</span><span style={styles.detailValue}>{selectedRecord.return_date ? formatDate(selectedRecord.return_date) : 'Pending'}</span></div>
+                <div style={styles.detailRow}>
+                  <span style={styles.detailLabel}>Book</span>
+                  <span style={styles.detailValue}>
+                    {getBookById(selectedRecord.book_id)?.title || "Unknown"}
+                  </span>
+                </div>
+                <div style={styles.detailRow}>
+                  <span style={styles.detailLabel}>Member</span>
+                  <span style={styles.detailValue}>
+                    {getMemberById(selectedRecord.member_id)?.name || "Unknown"}
+                  </span>
+                </div>
+                <div style={styles.detailRow}>
+                  <span style={styles.detailLabel}>Borrowed</span>
+                  <span style={styles.detailValue}>
+                    {formatDate(selectedRecord.borrow_date)}
+                  </span>
+                </div>
+                <div style={styles.detailRow}>
+                  <span style={styles.detailLabel}>Due</span>
+                  <span style={styles.detailValue}>
+                    {formatDate(selectedRecord.due_date)}
+                  </span>
+                </div>
+                <div style={styles.detailRow}>
+                  <span style={styles.detailLabel}>Returned</span>
+                  <span style={styles.detailValue}>
+                    {selectedRecord.return_date
+                      ? formatDate(selectedRecord.return_date)
+                      : "Pending"}
+                  </span>
+                </div>
               </div>
               <div style={styles.modalActions}>
-                <button type="button" style={styles.cancelButton} onClick={() => setShowDetailsModal(false)}>Close</button>
+                <button
+                  type="button"
+                  style={styles.cancelButton}
+                  onClick={() => setShowDetailsModal(false)}
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>
@@ -575,29 +632,19 @@ const BorrowReturnPage = () => {
 //styles
 const styles = {
   container: {
-    padding: "1rem",
+    ...commonStyles.container,
   },
   header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "2rem",
-    flexWrap: "wrap",
-    gap: "1rem",
+    ...commonStyles.header,
   },
   headerLeft: {
-    flex: 1,
+    ...commonStyles.headerLeft,
   },
   title: {
-    fontSize: "1.875rem",
-    fontWeight: "600",
-    color: "#111827",
-    margin: "0 0 0.5rem 0",
+    ...commonStyles.title,
   },
   subtitle: {
-    fontSize: "0.875rem",
-    color: "#6b7280",
-    margin: "0",
+    ...commonStyles.subtitle,
   },
   headerButtons: {
     display: "flex",
@@ -668,10 +715,7 @@ const styles = {
     marginBottom: "1.5rem",
   },
   sectionTitle: {
-    fontSize: "1.125rem",
-    fontWeight: "600",
-    color: "#111827",
-    margin: "0 0 1rem 0",
+    ...commonStyles.sectionTitle,
   },
   noData: {
     textAlign: "center",
@@ -761,61 +805,32 @@ const styles = {
   },
   // Modal styles (similar to other pages)
   modalOverlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 1000,
+    ...commonStyles.modalOverlay,
   },
   modal: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    width: "90%",
-    maxWidth: "500px",
+    ...commonStyles.modal,
     maxHeight: "90vh",
-    overflow: "hidden",
-    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
   },
   modalHeader: {
-    padding: "1.5rem 1.5rem 1rem",
-    borderBottom: "1px solid #e5e7eb",
+    ...commonStyles.modalHeader,
   },
   modalTitle: {
-    fontSize: "1.25rem",
-    fontWeight: "600",
-    color: "#111827",
-    margin: "0 0 0.5rem 0",
+    ...commonStyles.modalTitle,
   },
   modalSubtitle: {
-    fontSize: "0.875rem",
-    color: "#6b7280",
-    margin: "0",
+    ...commonStyles.modalSubtitle,
   },
   form: {
-    padding: "1.5rem",
+    ...commonStyles.form,
   },
   formGroup: {
-    marginBottom: "1.25rem",
+    ...commonStyles.formGroup,
   },
   label: {
-    display: "block",
-    fontSize: "0.875rem",
-    fontWeight: "500",
-    color: "#374151",
-    marginBottom: "0.5rem",
+    ...commonStyles.label,
   },
   input: {
-    width: "100%",
-    padding: "0.625rem 0.875rem",
-    fontSize: "0.875rem",
-    border: "1px solid #d1d5db",
-    borderRadius: "6px",
-    outline: "none",
+    ...commonStyles.input,
   },
   helperText: {
     fontSize: "0.75rem",

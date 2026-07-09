@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { staffService } from "../services/staffService";
+import { commonStyles } from "../styles/commonStyles";
 
 const StaffPage = () => {
   const [staffMembers, setStaffMembers] = useState([]);
@@ -509,7 +510,7 @@ const StaffPage = () => {
 //styles
 const styles = {
   container: {
-    padding: "1rem",
+    ...commonStyles.container,
   },
   adminNote: {
     backgroundColor: "#fef3c7",
@@ -546,57 +547,31 @@ const styles = {
     fontSize: "0.9rem",
   },
   header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "2rem",
+    ...commonStyles.header,
   },
   headerLeft: {
-    flex: 1,
+    ...commonStyles.headerLeft,
   },
   title: {
-    fontSize: "1.875rem",
-    fontWeight: "600",
-    color: "#111827",
-    margin: "0 0 0.5rem 0",
+    ...commonStyles.title,
   },
   subtitle: {
-    fontSize: "0.875rem",
-    color: "#6b7280",
-    margin: "0",
+    ...commonStyles.subtitle,
   },
   addButton: {
-    backgroundColor: "#4f46e5",
-    color: "white",
-    border: "none",
-    padding: "0.625rem 1.25rem",
-    borderRadius: "8px",
-    fontSize: "0.875rem",
-    fontWeight: "500",
-    cursor: "pointer",
-    transition: "background-color 0.2s",
-    whiteSpace: "nowrap",
+    ...commonStyles.addButton,
   },
   searchContainer: {
-    position: "relative",
+    ...commonStyles.searchContainer,
     marginBottom: "2rem",
   },
   searchInput: {
-    width: "100%",
-    boxSizing: "border-box",
-    padding: "0.75rem 1rem 0.75rem 3rem",
+    ...commonStyles.searchInput,
     fontSize: "0.875rem",
-    border: "1px solid #d1d5db",
     borderRadius: "8px",
-    outline: "none",
-    transition: "border-color 0.2s",
   },
   searchIcon: {
-    position: "absolute",
-    left: "1rem",
-    top: "50%",
-    transform: "translateY(-50%)",
-    color: "#9ca3af",
+    ...commonStyles.searchIcon,
   },
   paginationBar: {
     display: "flex",
@@ -749,62 +724,33 @@ const styles = {
   },
   // Modal Styles
   modalOverlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 1000,
+    ...commonStyles.modalOverlay,
   },
   modal: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    width: "90%",
-    maxWidth: "500px",
+    ...commonStyles.modal,
     maxHeight: "90vh",
-    overflow: "hidden",
-    boxShadow:
-      "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
   },
   modalHeader: {
-    padding: "1.5rem 1.5rem 1rem",
-    borderBottom: "1px solid #e5e7eb",
+    ...commonStyles.modalHeader,
   },
   modalTitle: {
-    fontSize: "1.25rem",
-    fontWeight: "600",
-    color: "#111827",
-    margin: "0 0 0.5rem 0",
+    ...commonStyles.modalTitle,
   },
   modalSubtitle: {
-    fontSize: "0.875rem",
-    color: "#6b7280",
-    margin: "0",
+    ...commonStyles.modalSubtitle,
   },
   form: {
-    padding: "1.5rem",
+    ...commonStyles.form,
   },
   formGroup: {
-    marginBottom: "1.25rem",
+    ...commonStyles.formGroup,
   },
   label: {
-    display: "block",
-    fontSize: "0.875rem",
-    fontWeight: "500",
-    color: "#374151",
-    marginBottom: "0.5rem",
+    ...commonStyles.label,
   },
   input: {
-    width: "100%",
-    padding: "0.625rem 0.875rem",
-    fontSize: "0.875rem",
-    border: "1px solid #d1d5db",
+    ...commonStyles.input,
     borderRadius: "6px",
-    outline: "none",
     transition: "border-color 0.2s",
   },
   modalActions: {

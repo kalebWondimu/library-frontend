@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import authService from "../services/authService";
+import { commonStyles } from "../styles/commonStyles";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -98,6 +99,7 @@ const LoginPage = () => {
 //style
 const styles = {
   container: {
+    ...commonStyles.container,
     display: "flex",
     minHeight: "100vh",
     justifyContent: "center",
@@ -115,14 +117,12 @@ const styles = {
     textAlign: "center",
   },
   title: {
+    ...commonStyles.title,
     fontSize: "1.75rem",
-    fontWeight: "700",
-    color: "#111827",
     marginBottom: "0.5rem",
   },
   subtitle: {
-    fontSize: "0.875rem",
-    color: "#6b7280",
+    ...commonStyles.subtitle,
     marginBottom: "1.5rem",
   },
   error: {
@@ -131,24 +131,23 @@ const styles = {
     marginBottom: "1rem",
   },
   form: {
+    ...commonStyles.form,
     display: "flex",
     flexDirection: "column",
     gap: "1rem",
   },
   label: {
+    ...commonStyles.label,
     display: "flex",
     flexDirection: "column",
     textAlign: "left",
-    fontSize: "0.875rem",
-    color: "#374151",
   },
   input: {
+    ...commonStyles.input,
     marginTop: "0.25rem",
     padding: "0.75rem 1rem",
     borderRadius: "8px",
-    border: "1px solid #d1d5db",
     fontSize: "1rem",
-    outline: "none",
   },
   button: {
     padding: "0.75rem 1rem",

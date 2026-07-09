@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { borrowingService } from "../services/borrowingService";
 import { memberService } from "../services/memberService";
 import { toast } from "react-hot-toast";
+import { commonStyles } from "../styles/commonStyles";
 
 const ReportsPage = () => {
   const [activeReport, setActiveReport] = useState("");
@@ -94,57 +95,77 @@ const ReportsPage = () => {
     return Math.ceil(filterByDate(data).length / itemsPerPage);
   };
 
-  const exportToPDF = () => {
+  const exportToExcel = () => {
     if (!reportData) {
       toast.error("No data to export");
       return;
     }
 
-    let pdfContent = `LIBRARY REPORT - ${activeReport.toUpperCase()}\n`;
-    pdfContent += `Generated: ${new Date().toLocaleString()}\n`;
-    pdfContent += `Date Filter: ${dateFilter}\n`;
-    pdfContent += "=".repeat(60) + "\n\n";
+    const rows = [];
+    const addRow = (cells) =>
+      rows.push(
+        cells.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","),
+      );
 
-    if (Array.isArray(reportData)) {
-      if (activeReport === "popular-books") {
-        pdfContent += "MOST POPULAR BOOKS\n";
-        pdfContent += "-".repeat(60) + "\n";
-        reportData.forEach((item, idx) => {
-          pdfContent += `${idx + 1}. ${item.book_title || item.title} - ${item.borrow_count || item.count} borrows\n`;
-        });
-      } else if (activeReport === "member-activity") {
-        pdfContent += "MEMBER ACTIVITY\n";
-        pdfContent += "-".repeat(60) + "\n";
-        reportData.forEach((item, idx) => {
-          pdfContent += `${idx + 1}. ${item.name} - Total: ${item.totalBorrows}, Outstanding: ${item.outstandingBorrows}\n`;
-        });
-      } else if (activeReport === "overdue") {
-        pdfContent += "OVERDUE BOOKS\n";
-        pdfContent += "-".repeat(60) + "\n";
-        pdfContent += `Total Overdue: ${reportData.length}\n\n`;
-        reportData.forEach((item, idx) => {
-          pdfContent += `${idx + 1}. ${item.book?.title || item.title} - Member: ${item.member?.name || item.memberName}\n`;
-          pdfContent += `   Due: ${new Date(item.due_date).toLocaleDateString()}\n`;
-        });
-      }
+    if (activeReport === "popular-books") {
+      addRow(["Rank", "Book", "Borrows"]);
+      reportData.forEach((item, idx) => {
+        addRow([
+          idx + 1,
+          item.book_title || item.title || "Unknown",
+          item.borrow_count || item.count || 0,
+        ]);
+      });
+    } else if (activeReport === "member-activity") {
+      addRow(["Member", "Total Borrows", "Outstanding Borrows"]);
+      reportData.forEach((item) => {
+        addRow([
+          item.name || "Unknown",
+          item.totalBorrows || 0,
+          item.outstandingBorrows || 0,
+        ]);
+      });
+    } else if (activeReport === "overdue") {
+      addRow(["Book", "Member", "Due Date"]);
+      reportData.forEach((item) => {
+        addRow([
+          item.book?.title || item.title || "Unknown",
+          item.member?.name || item.memberName || "Unknown",
+          new Date(item.due_date).toLocaleDateString(),
+        ]);
+      });
+    } else if (activeReport === "monthly") {
+      addRow(["Metric", "Value"]);
+      addRow([
+        "Total Borrows This Month",
+        reportData.totalBorrowsThisMonth || 0,
+      ]);
+      addRow([
+        "Average Borrow Duration",
+        `${reportData.averageBorrowDuration || 0} days`,
+      ]);
+      addRow(["Return Rate", `${reportData.returnRate || 0}%`]);
     } else {
-      pdfContent += JSON.stringify(reportData, null, 2);
+      addRow(["Data"]);
+      addRow([JSON.stringify(reportData)]);
     }
 
+    const csvContent = `Report: ${activeReport}\nGenerated: ${new Date().toLocaleString()}\nDate Filter: ${dateFilter}\n\n${rows.join("\n")}`;
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
     const element = document.createElement("a");
-    element.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(pdfContent),
-    );
+    element.setAttribute("href", url);
     element.setAttribute(
       "download",
-      `report-${activeReport}-${new Date().getTime()}.txt`,
+      `report-${activeReport}-${new Date().getTime()}.csv`,
     );
     element.style.display = "none";
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
-    toast.success("Report exported");
+    URL.revokeObjectURL(url);
+    toast.success("Report exported as CSV");
   };
 
   const renderReportContent = () => {
@@ -237,6 +258,16 @@ const ReportsPage = () => {
                 <option value="week">Last 7 Days</option>
                 <option value="month">Last 30 Days</option>
               </select>
+              <button
+                type="button"
+                onClick={() => {
+                  setDateFilter("all");
+                  setCurrentPage(1);
+                }}
+                style={styles.clearFilterButton}
+              >
+                Reset Filter
+              </button>
             </div>
             <table style={styles.table}>
               <thead>
@@ -391,8 +422,8 @@ const ReportsPage = () => {
       </div>
 
       {activeReport && (
-        <button onClick={exportToPDF} style={styles.exportButton}>
-          📥 Export Report
+        <button onClick={exportToExcel} style={styles.exportButton}>
+          📥 Export to Excel
         </button>
       )}
 
@@ -403,21 +434,18 @@ const ReportsPage = () => {
 
 const styles = {
   container: {
-    padding: "1rem",
+    ...commonStyles.container,
   },
   header: {
+    ...commonStyles.header,
     marginBottom: "2rem",
   },
   title: {
+    ...commonStyles.title,
     fontSize: "1.5rem",
-    fontWeight: "600",
-    color: "#111827",
-    margin: "0 0 0.5rem 0",
   },
   subtitle: {
-    fontSize: "0.875rem",
-    color: "#6b7280",
-    margin: "0",
+    ...commonStyles.subtitle,
   },
   grid: {
     display: "grid",

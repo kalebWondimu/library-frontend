@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { genreService } from "../services/genreService";
+import { commonStyles } from "../styles/commonStyles";
 
 const GenresPage = () => {
   const [genres, setGenres] = useState([]);
@@ -310,7 +311,7 @@ const GenresPage = () => {
 //styles
 const styles = {
   container: {
-    padding: "1rem",
+    ...commonStyles.container,
   },
   adminNote: {
     backgroundColor: "#fef3c7",
@@ -333,28 +334,21 @@ const styles = {
   },
 
   header: {
-    display: "flex",
+    ...commonStyles.header,
     justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "2rem",
   },
   headerLeft: {
-    flex: 1,
+    ...commonStyles.headerLeft,
   },
   headerRight: {
     display: "flex",
     gap: "0.75rem",
   },
   title: {
-    fontSize: "1.875rem",
-    fontWeight: "600",
-    color: "#111827",
-    margin: "0 0 0.5rem 0",
+    ...commonStyles.title,
   },
   subtitle: {
-    fontSize: "0.875rem",
-    color: "#6b7280",
-    margin: "0",
+    ...commonStyles.subtitle,
   },
   refreshButton: {
     backgroundColor: "#f3f4f6",
