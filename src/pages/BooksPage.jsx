@@ -604,42 +604,6 @@ const styles = {
   searchIcon: {
     ...commonStyles.searchIcon,
   },
-  modalOverlay: {
-    ...commonStyles.modalOverlay,
-  },
-  modal: {
-    ...commonStyles.modal,
-  },
-  modalHeader: {
-    ...commonStyles.modalHeader,
-  },
-  modalTitle: {
-    ...commonStyles.modalTitle,
-  },
-  modalSubtitle: {
-    ...commonStyles.modalSubtitle,
-  },
-  form: {
-    ...commonStyles.form,
-  },
-  formGroup: {
-    ...commonStyles.formGroup,
-  },
-  label: {
-    ...commonStyles.label,
-  },
-  input: {
-    ...commonStyles.input,
-  },
-  modalActions: {
-    ...commonStyles.modalActions,
-  },
-  cancelButton: {
-    ...commonStyles.cancelButton,
-  },
-  submitButton: {
-    ...commonStyles.submitButton,
-  },
   paginationBar: {
     ...commonStyles.paginationBar,
   },
@@ -651,41 +615,6 @@ const styles = {
   },
   paginationText: {
     ...commonStyles.paginationText,
-  },
-    top: "50%",
-    transform: "translateY(-50%)",
-    color: "#9ca3af",
-  },
-  paginationBar: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "0.75rem",
-    marginTop: "1.5rem",
-    padding: "0.75rem 1rem",
-    backgroundColor: "#fff",
-    borderRadius: "999px",
-    border: "1px solid #e5e7eb",
-    boxShadow: "0 4px 12px rgba(15, 23, 42, 0.06)",
-    gridColumn: "1 / -1",
-  },
-  paginationText: {
-    fontSize: "0.9rem",
-    color: "#475569",
-    fontWeight: 600,
-  },
-  paginationButton: {
-    border: "1px solid #d1d5db",
-    backgroundColor: "white",
-    color: "#374151",
-    padding: "0.55rem 0.95rem",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontWeight: 600,
-  },
-  paginationButtonDisabled: {
-    opacity: 0.6,
-    cursor: "not-allowed",
   },
   booksGrid: {
     display: "grid",
