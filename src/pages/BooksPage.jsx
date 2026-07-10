@@ -268,37 +268,7 @@ const BooksPage = () => {
         </button>
       </div>
 
-      {/* Static pagination bar positioned below the grid */}
-      <div style={styles.paginationBar}>
-        <button
-          style={{
-            ...styles.paginationButton,
-            ...(currentPage === 1 ? styles.paginationButtonDisabled : {}),
-          }}
-          onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-          disabled={currentPage === 1}
-        >
-          ← Previous
-        </button>
-        <span style={styles.paginationText}>
-          Page {totalPages === 0 ? 1 : currentPage} of{" "}
-          {totalPages === 0 ? 1 : totalPages}
-        </span>
-        <button
-          style={{
-            ...styles.paginationButton,
-            ...(currentPage === totalPages || totalPages === 0
-              ? styles.paginationButtonDisabled
-              : {}),
-          }}
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(totalPages || 1, prev + 1))
-          }
-          disabled={currentPage === totalPages || totalPages === 0}
-        >
-          Next →
-        </button>
-      </div>
+      {/* pagination will appear below the grid for better UX */}
 
       {/* Search Bar */}
       <div style={styles.searchContainer}>
@@ -395,6 +365,44 @@ const BooksPage = () => {
                 </div>
               </div>
             ))}
+            {filteredBooks.length > itemsPerPage && (
+              <div style={styles.paginationBar}>
+                <button
+                  style={{
+                    ...styles.paginationButton,
+                    ...(currentPage === 1
+                      ? styles.paginationButtonDisabled
+                      : {}),
+                  }}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(1, prev - 1))
+                  }
+                  disabled={currentPage === 1}
+                >
+                  ← Previous
+                </button>
+                <span style={styles.paginationText}>
+                  Page {totalPages === 0 ? 1 : currentPage} of{" "}
+                  {totalPages === 0 ? 1 : totalPages}
+                </span>
+                <button
+                  style={{
+                    ...styles.paginationButton,
+                    ...(currentPage === totalPages || totalPages === 0
+                      ? styles.paginationButtonDisabled
+                      : {}),
+                  }}
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      Math.min(totalPages || 1, prev + 1),
+                    )
+                  }
+                  disabled={currentPage === totalPages || totalPages === 0}
+                >
+                  Next →
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>

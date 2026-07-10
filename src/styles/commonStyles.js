@@ -81,7 +81,7 @@ export const commonStyles = {
     backgroundColor: "#fff",
     borderRadius: "18px",
     boxShadow: "0 30px 60px rgba(15, 23, 42, 0.16)",
-    overflow: "hidden",
+    overflow: "auto",
   },
   modalHeader: {
     padding: "1.5rem",
