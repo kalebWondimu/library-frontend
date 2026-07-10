@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { bookService } from "../services/bookService";
 import { memberService } from "../services/memberService";
 import { borrowingService } from "../services/borrowingService";
-import { toast } from "react-hot-toast";
+// toast intentionally not used here to avoid noisy errors on transient fetch failures
 import { commonStyles } from "../styles/commonStyles";
 
 const DashboardPage = () => {
@@ -14,6 +14,7 @@ const DashboardPage = () => {
     overdueBooks: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,6 +24,7 @@ const DashboardPage = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
+      setError(false);
 
       // Fetch all data
       const [booksData, membersData, borrowRecordsData] = await Promise.all([
@@ -62,7 +64,7 @@ const DashboardPage = () => {
       });
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
-      toast.error("Failed to load dashboard data");
+      setError(true);
       // Keep fallback data
       setStats({
         totalBooks: 0,
@@ -231,6 +233,35 @@ const DashboardPage = () => {
           <div style={styles.statDescription}>Books past due date</div>
         </div>
       </div>
+
+      {/* Inline error (retry) */}
+      {error && !loading && (
+        <div
+          style={{
+            ...styles.adminAccessNote,
+            backgroundColor: "#fee2e2",
+            borderLeft: "4px solid #ef4444",
+          }}
+        >
+          <p style={{ margin: 0, color: "#7f1d1d" }}>
+            Failed to load dashboard data. You can retry to refresh the data.
+            <button
+              onClick={fetchDashboardData}
+              style={{
+                marginLeft: "1rem",
+                padding: "0.35rem 0.6rem",
+                borderRadius: 6,
+                border: "none",
+                background: "#ef4444",
+                color: "#fff",
+                cursor: "pointer",
+              }}
+            >
+              Retry
+            </button>
+          </p>
+        </div>
+      )}
 
       {/* Quick Actions Section */}
       <div style={styles.quickActionsSection}>

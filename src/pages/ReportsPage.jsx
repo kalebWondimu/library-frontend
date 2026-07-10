@@ -238,8 +238,6 @@ const ReportsPage = () => {
           </div>
         );
       case "member-activity":
-        if (!paginatedData || paginatedData.length === 0)
-          return <p>👥 No member activity data.</p>;
         return (
           <div style={styles.detailsBox}>
             <h4>👥 Member Activity</h4>
@@ -269,48 +267,58 @@ const ReportsPage = () => {
                 Reset Filter
               </button>
             </div>
-            <table style={styles.table}>
-              <thead>
-                <tr>
-                  <th style={styles.tableHeader}>Member</th>
-                  <th style={styles.tableHeader}>Total Borrows</th>
-                  <th style={styles.tableHeader}>Outstanding</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedData.map((item) => (
-                  <tr key={item.member_id || item.id}>
-                    <td style={styles.tableCell}>{item.name}</td>
-                    <td style={styles.tableCell}>{item.totalBorrows || 0}</td>
-                    <td style={styles.tableCell}>
-                      {item.outstandingBorrows || 0}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {totalPages > 1 && (
-              <div style={styles.pagination}>
-                <button
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  style={styles.paginationBtn}
-                >
-                  ← Prev
-                </button>
-                <span>
-                  Page {currentPage} of {totalPages}
-                </span>
-                <button
-                  onClick={() =>
-                    setCurrentPage(Math.min(totalPages, currentPage + 1))
-                  }
-                  disabled={currentPage === totalPages}
-                  style={styles.paginationBtn}
-                >
-                  Next →
-                </button>
-              </div>
+            {!paginatedData || paginatedData.length === 0 ? (
+              <p>👥 No member activity data.</p>
+            ) : (
+              <>
+                <table style={styles.table}>
+                  <thead>
+                    <tr>
+                      <th style={styles.tableHeader}>Member</th>
+                      <th style={styles.tableHeader}>Total Borrows</th>
+                      <th style={styles.tableHeader}>Outstanding</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedData.map((item) => (
+                      <tr key={item.member_id || item.id}>
+                        <td style={styles.tableCell}>{item.name}</td>
+                        <td style={styles.tableCell}>
+                          {item.totalBorrows || 0}
+                        </td>
+                        <td style={styles.tableCell}>
+                          {item.outstandingBorrows || 0}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {totalPages > 1 && (
+                  <div style={styles.pagination}>
+                    <button
+                      onClick={() =>
+                        setCurrentPage(Math.max(1, currentPage - 1))
+                      }
+                      disabled={currentPage === 1}
+                      style={styles.paginationBtn}
+                    >
+                      ← Prev
+                    </button>
+                    <span>
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                      onClick={() =>
+                        setCurrentPage(Math.min(totalPages, currentPage + 1))
+                      }
+                      disabled={currentPage === totalPages}
+                      style={styles.paginationBtn}
+                    >
+                      Next →
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         );

@@ -28,6 +28,15 @@ export const staffService = {
     }
   },
 
+  updateProfile: async (profileData) => {
+    try {
+      const response = await api.patch(`/staff/me`, profileData);
+      return { data: response.data };
+    } catch (error) {
+      throw error;
+    }
+  },
+
   deleteStaff: async (id) => {
     try {
       const response = await api.delete(`/staff/${id}`);

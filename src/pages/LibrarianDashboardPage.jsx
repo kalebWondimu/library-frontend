@@ -95,6 +95,14 @@ const LibrarianDashboardPage = () => {
       color: "#f59e0b",
       description: "Add new books to catalog",
     },
+    {
+      label: "Add Member",
+      icon: "👥",
+      path: "/members",
+      query: "openForm=add",
+      color: "#8b5cf6",
+      description: "Register new members",
+    },
   ];
 
   const getUserRole = () => {
@@ -109,8 +117,9 @@ const LibrarianDashboardPage = () => {
 
   const base = "/librarian";
 
-  const handleQuickAction = (path) => {
-    navigate(`${base}${path}`);
+  const handleQuickAction = (action) => {
+    const queryString = action.query ? `?${action.query}` : "";
+    navigate(`${base}${action.path}${queryString}`);
   };
 
   return (
@@ -215,6 +224,7 @@ const LibrarianDashboardPage = () => {
           <ul style={styles.permissionsList}>
             <li>✅ Manage books (add, edit, delete)</li>
             <li>✅ Process book borrowing and returns</li>
+            <li>✅ Manage members (add, edit, view)</li>
           </ul>
         </div>
 

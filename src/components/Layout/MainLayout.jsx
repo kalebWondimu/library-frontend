@@ -87,9 +87,12 @@ const MainLayout = () => {
     navigate(`${base}/profile`);
   };
 
+  // Remove Profile from sidebar navigation; profile is available via top-right dropdown
+  const visibleMenuItems = menuItems.filter((item) => item.label !== "Profile");
+
   const activePage =
-    menuItems.find((item) => location.pathname.startsWith(item.path))?.label ||
-    "Dashboard";
+    visibleMenuItems.find((item) => location.pathname.startsWith(item.path))
+      ?.label || "Dashboard";
 
   return (
     <div style={styles.container}>
@@ -97,7 +100,7 @@ const MainLayout = () => {
         <aside style={styles.sidebar}>
           <div style={styles.logo}>Library Manager</div>
           <nav style={styles.nav}>
-            {menuItems.map((item) => (
+            {visibleMenuItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}

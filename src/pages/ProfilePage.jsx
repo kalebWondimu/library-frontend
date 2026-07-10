@@ -60,11 +60,20 @@ const ProfilePage = () => {
 
     try {
       if (user?.id) {
-        await staffService.updateStaff(user.id, updatePayload);
+        // Use the dedicated 'me' endpoint so admins/librarians can update their own profile
+        await staffService.updateProfile(updatePayload);
         const updatedUser = { ...user, ...updatePayload };
-        localStorage.setItem("user", JSON.stringify(updatedUser));
         setUser(updatedUser);
-        toast.success("Profile updated successfully");
+
+        if (!user.is_demo) {
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+        }
+
+        toast.success(
+          user.is_demo
+            ? "Profile changes are temporary for demo accounts and will reset after reload."
+            : "Profile updated successfully",
+        );
       } else {
         toast.error("Unable to update profile. Please log in again.");
       }

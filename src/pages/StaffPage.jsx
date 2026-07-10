@@ -230,7 +230,9 @@ const StaffPage = () => {
   };
 
   const getRoleColor = (role) => {
-    return role === "admin" ? "#8b5cf6" : "#3b82f6";
+    if (role === "admin") return "#8b5cf6";
+    if (role === "super-admin") return "#7c3aed";
+    return "#3b82f6";
   };
 
   return (
@@ -332,7 +334,11 @@ const StaffPage = () => {
                       color: getRoleColor(staff.role),
                     }}
                   >
-                    {staff.role === "admin" ? "Admin" : "Librarian"}
+                    {staff.role === "admin"
+                      ? "Admin"
+                      : staff.role === "super-admin"
+                        ? "Super Admin"
+                        : "Librarian"}
                   </span>
                 </div>
               </div>
@@ -425,7 +431,12 @@ const StaffPage = () => {
                   disabled={currentStaff?.username === "admin"}
                 >
                   <option value="librarian">Librarian</option>
-                  <option value="admin">Admin</option>
+                  {userRole === "super-admin" && (
+                    <>
+                      <option value="admin">Admin</option>
+                      <option value="super-admin">Super Admin</option>
+                    </>
+                  )}
                 </select>
               </div>
 
