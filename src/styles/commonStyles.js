@@ -82,6 +82,7 @@ export const commonStyles = {
     borderRadius: "18px",
     boxShadow: "0 30px 60px rgba(15, 23, 42, 0.16)",
     overflow: "auto",
+    maxHeight: "90vh",
   },
   modalHeader: {
     padding: "1.5rem",

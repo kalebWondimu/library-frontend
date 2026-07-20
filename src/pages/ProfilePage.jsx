@@ -96,6 +96,11 @@ const ProfilePage = () => {
 
   return (
     <div style={styles.container}>
+      {user?.is_demo && (
+        <div style={styles.demoWarning}>
+          <span>⚠️ Demo accounts cannot modify their profile or manage staff accounts.</span>
+        </div>
+      )}
       <div style={styles.card}>
         <div style={styles.header}>
           <div>
@@ -103,9 +108,13 @@ const ProfilePage = () => {
             <p style={styles.subtitle}>View and update your account.</p>
           </div>
           <button
-            style={styles.editButton}
+            style={{
+              ...styles.editButton,
+              ...(user?.is_demo ? styles.buttonDisabled : {}),
+            }}
             type="button"
             onClick={() => setEditing(true)}
+            disabled={user?.is_demo}
           >
             Edit Profile
           </button>
@@ -129,12 +138,12 @@ const ProfilePage = () => {
               <span style={styles.detailLabel}>Email</span>
               <span style={styles.detailValue}>{user.email}</span>
             </div>
-            <div style={styles.detailRow}>
-              <span style={styles.detailLabel}>Phone</span>
-              <span style={styles.detailValue}>
-                {user.phone || "Not provided"}
-              </span>
-            </div>
+            {user.phone && (
+              <div style={styles.detailRow}>
+                <span style={styles.detailLabel}>Phone</span>
+                <span style={styles.detailValue}>{user.phone}</span>
+              </div>
+            )}
             <div style={styles.detailRow}>
               <span style={styles.detailLabel}>Role</span>
               <span style={styles.detailValue}>{user.role}</span>
@@ -312,6 +321,20 @@ const styles = {
   },
   submitButton: {
     ...commonStyles.submitButton,
+  },
+  demoWarning: {
+    backgroundColor: "#fef3c7",
+    border: "1px solid #fde68a",
+    color: "#92400e",
+    padding: "1rem",
+    borderRadius: "10px",
+    marginBottom: "1.5rem",
+    fontSize: "0.95rem",
+    fontWeight: 600,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+    cursor: "not-allowed",
   },
 };
 

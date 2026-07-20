@@ -10,6 +10,7 @@ const StaffPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentStaff, setCurrentStaff] = useState(null);
   const [userRole, setUserRole] = useState("");
+  const [isDemo, setIsDemo] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
   const [formData, setFormData] = useState({
@@ -27,13 +28,18 @@ const StaffPage = () => {
       try {
         const parsedUser = JSON.parse(storedUser);
         setUserRole(parsedUser.role || "");
-        if (parsedUser.role === "super-admin" || parsedUser.role === "admin") {
+        setIsDemo(parsedUser.is_demo || false);
+        if (
+          !parsedUser.is_demo &&
+          (parsedUser.role === "super-admin" || parsedUser.role === "admin")
+        ) {
           fetchStaff();
         } else {
           setLoading(false);
         }
       } catch {
         setUserRole("");
+        setIsDemo(false);
         setLoading(false);
       }
     } else {
@@ -207,22 +213,33 @@ const StaffPage = () => {
         toast.success("Staff deleted successfully");
         fetchStaff();
       } catch (error) {
-        const errorMessage =
-          error.response?.data?.message || "Failed to delete staff";
-        toast.error(
-          Array.isArray(errorMessage) ? errorMessage[0] : errorMessage,
-        );
+        let msg = "Failed to delete staff";
+
+        if (error.response?.data?.message) {
+          msg = error.response.data.message;
+        } else if (error.response?.status === 403) {
+          msg =
+            "Cannot delete this staff member. Demo accounts or protected staff cannot be deleted.";
+        }
+
+        toast.error(Array.isArray(msg) ? msg[0] : msg);
       }
     }
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return "Unknown";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "numeric",
-      day: "numeric",
-      year: "numeric",
-    });
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "N/A";
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    } catch (e) {
+      return "N/A";
+    }
   };
 
   const getStatusColor = (status) => {
@@ -237,6 +254,11 @@ const StaffPage = () => {
 
   return (
     <div style={styles.container}>
+      {isDemo && (
+        <div style={styles.demoWarning}>
+          <span>⚠️ Demo accounts cannot manage staff accounts.</span>
+        </div>
+      )}
       <div style={styles.adminNote}>
         <div style={styles.adminNoteIcon}>🛡️</div>
         <div style={styles.adminNoteContent}>
@@ -253,7 +275,7 @@ const StaffPage = () => {
             Manage library staff and administrators (Admin & Super Admin)
           </p>
         </div>
-        {(userRole === "super-admin" || userRole === "admin") && (
+        {!isDemo && (userRole === "super-admin" || userRole === "admin") && (
           <button style={styles.addButton} onClick={() => handleOpenModal()}>
             + Add Staff
           </button>
@@ -791,6 +813,16 @@ const styles = {
     fontWeight: "500",
     cursor: "pointer",
     transition: "background-color 0.2s",
+  },
+  demoWarning: {
+    backgroundColor: "#fef3c7",
+    border: "1px solid #fde68a",
+    color: "#92400e",
+    padding: "1rem",
+    borderRadius: "10px",
+    marginBottom: "1.5rem",
+    fontSize: "0.95rem",
+    fontWeight: 600,
   },
 };
 

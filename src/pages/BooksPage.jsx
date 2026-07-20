@@ -223,12 +223,27 @@ const BooksPage = () => {
         toast.success("Book deleted successfully");
         fetchBooks(); // Refresh the list
       } catch (error) {
-        const msg =
-          error.response?.data?.message ||
-          (error.response?.status === 500
-            ? "Unable to delete this book right now. It may have related borrow history."
-            : "This book cannot be deleted because it has borrow history.");
-        toast.error(msg);
+        let msg = "Unable to delete this book";
+
+        if (error.response?.data?.message) {
+          msg = error.response.data.message;
+          // Format related record error message
+          if (
+            msg.toLowerCase().includes("borrow") ||
+            msg.toLowerCase().includes("foreign")
+          ) {
+            msg =
+              "This book has borrowing records and cannot be deleted. Clear the borrow history first or contact your administrator.";
+          }
+        } else if (
+          error.response?.status === 400 ||
+          error.response?.status === 500
+        ) {
+          msg =
+            "This book has associated borrow records and cannot be deleted. Please clear the borrowing history first.";
+        }
+
+        toast.error(Array.isArray(msg) ? msg[0] : msg);
       }
     }
   };
@@ -500,7 +515,7 @@ const BooksPage = () => {
                 )}
               </div>
 
-              <div style={styles.modalActions}>
+              <div style={{ ...styles.modalActions, paddingBottom: "1rem" }}>
                 <button
                   type="button"
                   style={styles.cancelButton}
@@ -750,7 +765,7 @@ const styles = {
     width: "90%",
     maxWidth: "500px",
     maxHeight: "90vh",
-    overflow: "hidden",
+    overflow: "auto",
     boxShadow:
       "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
   },

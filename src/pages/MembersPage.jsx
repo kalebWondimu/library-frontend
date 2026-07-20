@@ -151,7 +151,24 @@ const MembersPage = () => {
           fetchMembers();
         }
       } catch (error) {
-        toast.error("Failed to delete member");
+        let msg = "Unable to delete this member";
+
+        if (error.response?.data?.message) {
+          msg = error.response.data.message;
+          // Format related record error message
+          if (
+            msg.toLowerCase().includes("borrow") ||
+            msg.toLowerCase().includes("active")
+          ) {
+            msg =
+              "This member has active borrowed books and cannot be deleted. All books must be returned first.";
+          }
+        } else if (error.response?.status === 400) {
+          msg =
+            "This member has active borrowed books and cannot be deleted. Please return all books first.";
+        }
+
+        toast.error(Array.isArray(msg) ? msg[0] : msg);
       }
     }
   };
@@ -247,19 +264,19 @@ const MembersPage = () => {
                       userRole === "librarian") && (
                       <button
                         title="Edit Member"
-                        style={styles.actionButton}
+                        style={styles.editButton}
                         onClick={() => handleOpenModal(member)}
                       >
-                        ✏️
+                        ✎
                       </button>
                     )}
 
                     <button
                       title="View Borrow History"
-                      style={styles.actionButton}
+                      style={styles.viewButton}
                       onClick={() => openHistory(member)}
                     >
-                      📚
+                      👁
                     </button>
 
                     {(userRole === "admin" || userRole === "super-admin") && (
@@ -268,7 +285,7 @@ const MembersPage = () => {
                         style={styles.deleteButton}
                         onClick={() => handleDeleteMember(member.id)}
                       >
-                        🗑️
+                        🗑
                       </button>
                     )}
                   </div>
@@ -611,7 +628,16 @@ const styles = {
     display: "flex",
     gap: "0.5rem",
   },
-  actionButton: {
+  viewButton: {
+    backgroundColor: "#f0fdf4",
+    border: "1px solid #dcfce7",
+    fontSize: "1rem",
+    cursor: "pointer",
+    padding: "0.35rem 0.5rem",
+    borderRadius: "8px",
+    color: "#16a34a",
+  },
+  editButton: {
     backgroundColor: "#eff6ff",
     border: "1px solid #bfdbfe",
     fontSize: "1rem",
@@ -621,14 +647,13 @@ const styles = {
     color: "#2563eb",
   },
   deleteButton: {
-    backgroundColor: "#f3f4f6",
-    border: "none",
-    fontSize: "1.1rem",
+    backgroundColor: "#fef2f2",
+    border: "1px solid #fee2e2",
+    fontSize: "1rem",
     cursor: "pointer",
     padding: "0.35rem 0.5rem",
-    borderRadius: "6px",
-    color: "#ef4444",
-    transition: "0.2s",
+    borderRadius: "8px",
+    color: "#dc2626",
   },
 
   memberEmail: {

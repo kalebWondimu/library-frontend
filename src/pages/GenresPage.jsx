@@ -128,11 +128,24 @@ const GenresPage = () => {
         toast.success("Genre deleted successfully");
         fetchGenres();
       } catch (error) {
-        const errorMessage =
-          error.response?.data?.message || "Failed to delete genre";
-        toast.error(
-          Array.isArray(errorMessage) ? errorMessage[0] : errorMessage,
-        );
+        let msg = "Unable to delete this genre";
+
+        if (error.response?.data?.message) {
+          msg = error.response.data.message;
+          // Format related record error message
+          if (
+            msg.toLowerCase().includes("book") ||
+            msg.toLowerCase().includes("associated")
+          ) {
+            msg =
+              "This genre has associated books and cannot be deleted. Please reassign or delete books in this genre first.";
+          }
+        } else if (error.response?.status === 400) {
+          msg =
+            "This genre has associated books and cannot be deleted. Please remove or reassign books first.";
+        }
+
+        toast.error(Array.isArray(msg) ? msg[0] : msg);
       }
     }
   };
@@ -518,7 +531,7 @@ const styles = {
     width: "90%",
     maxWidth: "500px",
     maxHeight: "90vh",
-    overflow: "hidden",
+    overflow: "auto",
     boxShadow:
       "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
   },

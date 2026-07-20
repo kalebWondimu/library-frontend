@@ -61,22 +61,38 @@ const ReportsPage = () => {
     const lastMonth = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     return data.filter((item) => {
-      const itemDate = new Date(
-        item.borrow_date || item.created_at || item.date,
+      // Try to get a valid date from any available field
+      const dateStr =
+        item.borrow_date ||
+        item.created_at ||
+        item.date ||
+        item.return_date ||
+        item.join_date;
+
+      if (!dateStr) return false;
+
+      let itemDate;
+      try {
+        itemDate = new Date(dateStr);
+        if (isNaN(itemDate.getTime())) return false;
+      } catch (e) {
+        return false;
+      }
+
+      // Normalize itemDate to start of day for comparison
+      const itemDateNormalized = new Date(
+        itemDate.getFullYear(),
+        itemDate.getMonth(),
+        itemDate.getDate(),
       );
-      if (!itemDate) return true;
 
       switch (dateFilter) {
         case "today":
-          return (
-            itemDate.getDate() === today.getDate() &&
-            itemDate.getMonth() === today.getMonth() &&
-            itemDate.getFullYear() === today.getFullYear()
-          );
+          return itemDateNormalized.getTime() === today.getTime();
         case "week":
-          return itemDate >= lastWeek && itemDate <= today;
+          return itemDateNormalized >= lastWeek && itemDateNormalized <= today;
         case "month":
-          return itemDate >= lastMonth && itemDate <= today;
+          return itemDateNormalized >= lastMonth && itemDateNormalized <= today;
         default:
           return true;
       }
