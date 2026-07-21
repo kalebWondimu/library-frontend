@@ -305,10 +305,7 @@ const styles = {
 
   // Welcome Section Styles
   welcomeSection: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.5rem",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+    ...commonStyles.card,
   },
   welcomeHeader: {
     display: "flex",
@@ -372,10 +369,7 @@ const styles = {
     gap: "1.5rem",
   },
   statCard: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.5rem",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+    ...commonStyles.card,
   },
   statHeader: {
     display: "flex",
@@ -415,10 +409,7 @@ const styles = {
 
   // Quick Actions Section
   quickActionsSection: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.5rem",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+    ...commonStyles.card,
   },
   sectionTitle: {
     ...commonStyles.sectionTitle,
@@ -434,7 +425,7 @@ const styles = {
     gap: "1rem",
   },
   quickActionButton: {
-    backgroundColor: "white",
+    ...commonStyles.card,
     border: "2px solid",
     borderRadius: "10px",
     padding: "1.5rem",

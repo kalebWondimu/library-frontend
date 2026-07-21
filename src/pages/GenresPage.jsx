@@ -388,24 +388,19 @@ const styles = {
     whiteSpace: "nowrap",
   },
   searchContainer: {
-    position: "relative",
+    ...commonStyles.searchContainer,
     marginBottom: "2rem",
   },
   searchInput: {
-    width: "100%",
+    ...commonStyles.searchInput,
     padding: "0.75rem 1rem 0.75rem 3rem",
     fontSize: "0.875rem",
-    border: "1px solid #d1d5db",
     borderRadius: "8px",
     outline: "none",
     transition: "border-color 0.2s",
   },
   searchIcon: {
-    position: "absolute",
-    left: "1rem",
-    top: "50%",
-    transform: "translateY(-50%)",
-    color: "#9ca3af",
+    ...commonStyles.searchIcon,
   },
   paginationBar: {
     display: "flex",
@@ -446,11 +441,9 @@ const styles = {
     gap: "1rem",
   },
   genreCard: {
-    backgroundColor: "white",
+    ...commonStyles.card,
     borderRadius: "8px",
     padding: "1.25rem",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-    border: "1px solid #e5e7eb",
     transition: "transform 0.2s, box-shadow 0.2s",
   },
   genreContent: {
@@ -514,26 +507,14 @@ const styles = {
 
   // Modal Styles
   modalOverlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 1000,
+    ...commonStyles.modalOverlay,
   },
   modal: {
-    backgroundColor: "white",
-    borderRadius: "12px",
+    ...commonStyles.modal,
     width: "90%",
     maxWidth: "500px",
     maxHeight: "90vh",
     overflow: "auto",
-    boxShadow:
-      "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
   },
   modalHeader: {
     padding: "1.5rem 1.5rem 1rem",

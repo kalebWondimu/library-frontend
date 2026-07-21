@@ -550,10 +550,7 @@ const styles = {
     marginBottom: "1.5rem",
   },
   reportCard: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.5rem",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+    ...commonStyles.card,
     cursor: "pointer",
     transition: "all 0.3s",
   },
@@ -567,11 +564,8 @@ const styles = {
     boxShadow: "0 0 0 0.25rem rgba(79, 70, 229, 0.12)",
   },
   reportDetails: {
-    backgroundColor: "white",
+    ...commonStyles.card,
     padding: "1rem",
-    borderRadius: "12px",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-    border: "1px solid #e5e7eb",
     minHeight: "300px",
   },
   detailsBox: {
@@ -594,23 +588,13 @@ const styles = {
     marginBottom: "1rem",
   },
   summaryCard: {
-    backgroundColor: "#f8fafc",
-    border: "1px solid #e2e8f0",
-    borderRadius: "10px",
-    padding: "0.85rem 1rem",
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.25rem",
+    ...commonStyles.summaryCard,
   },
   summaryLabel: {
-    color: "#64748b",
-    fontSize: "0.85rem",
-    fontWeight: 600,
+    ...commonStyles.summaryLabel,
   },
   summaryValue: {
-    color: "#0f172a",
-    fontSize: "1.1rem",
-    fontWeight: 700,
+    ...commonStyles.summaryValue,
   },
   statsGrid: {
     display: "grid",
@@ -625,25 +609,17 @@ const styles = {
     textAlign: "center",
   },
   list: {
-    paddingLeft: "1rem",
-    marginTop: "1rem",
+    ...commonStyles.list,
   },
   table: {
-    width: "100%",
-    borderCollapse: "collapse",
-    marginTop: "1rem",
+    ...commonStyles.table,
   },
 
   tableHeader: {
-    textAlign: "left",
-    borderBottom: "2px solid #d1d5db",
-    padding: "0.75rem",
-    backgroundColor: "#f9fafb",
-    fontWeight: "600",
+    ...commonStyles.tableHeader,
   },
   tableCell: {
-    padding: "0.75rem",
-    borderBottom: "1px solid #f3f4f6",
+    ...commonStyles.tableCell,
   },
   filterGroup: {
     marginBottom: "1rem",

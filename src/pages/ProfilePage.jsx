@@ -245,7 +245,7 @@ const styles = {
     ...commonStyles.container,
   },
   card: {
-    backgroundColor: "#fff",
+    ...commonStyles.card,
     borderRadius: "20px",
     boxShadow: "0 20px 60px rgba(15, 23, 42, 0.08)",
     padding: "2rem",
@@ -304,19 +304,16 @@ const styles = {
     gap: "0.75rem",
   },
   detailRow: {
-    display: "flex",
-    justifyContent: "space-between",
+    ...commonStyles.detailRow,
     padding: "0.95rem 1rem",
     borderRadius: "14px",
     backgroundColor: "#f8fafc",
   },
   detailLabel: {
-    color: "#64748b",
-    fontWeight: 600,
+    ...commonStyles.detailLabel,
   },
   detailValue: {
-    color: "#111827",
-    fontWeight: 600,
+    ...commonStyles.detailValue,
   },
   formGroup: {
     ...commonStyles.formGroup,

@@ -678,10 +678,7 @@ const styles = {
     marginBottom: "2rem",
   },
   statCard: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.5rem",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+    ...commonStyles.card,
     display: "flex",
     alignItems: "center",
     gap: "1rem",
@@ -709,19 +706,13 @@ const styles = {
     marginTop: "0.25rem",
   },
   section: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.5rem",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-    marginBottom: "1.5rem",
+    ...commonStyles.sectionCard,
   },
   sectionTitle: {
     ...commonStyles.sectionTitle,
   },
   noData: {
-    textAlign: "center",
-    color: "#6b7280",
-    padding: "2rem",
+    ...commonStyles.emptyStateCompact,
   },
   recordsList: {
     display: "flex",
@@ -729,10 +720,7 @@ const styles = {
     gap: "1rem",
   },
   recordCard: {
-    backgroundColor: "#f9fafb",
-    borderRadius: "8px",
-    padding: "1.25rem",
-    border: "1px solid #e5e7eb",
+    ...commonStyles.cardSoft,
   },
   recordHeader: {
     display: "flex",
@@ -790,19 +778,14 @@ const styles = {
     gap: "0.75rem",
   },
   detailRow: {
-    display: "flex",
-    flexDirection: "column",
+    ...commonStyles.detailColumnRow,
   },
   detailLabel: {
-    fontSize: "0.75rem",
-    color: "#6b7280",
-    fontWeight: "500",
+    ...commonStyles.detailLabel,
     marginBottom: "0.25rem",
   },
   detailValue: {
-    fontSize: "0.875rem",
-    color: "#111827",
-    fontWeight: "500",
+    ...commonStyles.detailValue,
   },
   // Modal styles (similar to other pages)
   modalOverlay: {
@@ -834,10 +817,7 @@ const styles = {
     ...commonStyles.input,
   },
   helperText: {
-    fontSize: "0.75rem",
-    color: "#6b7280",
-    marginTop: "0.25rem",
-    display: "block",
+    ...commonStyles.helperText,
   },
   modalActions: {
     display: "flex",

@@ -251,14 +251,11 @@ const LibrarianDashboardPage = () => {
 //styles
 const styles = {
   container: {
-    padding: "1rem",
+    ...commonStyles.container,
   },
   welcomeSection: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.5rem",
+    ...commonStyles.card,
     marginBottom: "2rem",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
   },
   welcomeHeader: {
     display: "flex",
@@ -296,10 +293,7 @@ const styles = {
     marginBottom: "2rem",
   },
   statCard: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.5rem",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+    ...commonStyles.card,
   },
   statHeader: {
     display: "flex",
@@ -318,11 +312,8 @@ const styles = {
     fontSize: "0.875rem",
   },
   quickActionsSection: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.5rem",
+    ...commonStyles.card,
     marginBottom: "2rem",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
   },
   sectionTitle: {
     ...commonStyles.sectionTitle,
@@ -337,7 +328,7 @@ const styles = {
     gap: "1rem",
   },
   quickActionButton: {
-    backgroundColor: "white",
+    ...commonStyles.card,
     border: "1px solid #e5e7eb",
     borderRadius: "8px",
     padding: "1.5rem",
@@ -363,10 +354,7 @@ const styles = {
     gap: "1.5rem",
   },
   infoCard: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.5rem",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+    ...commonStyles.card,
   },
   infoTitle: {
     fontSize: "1rem",

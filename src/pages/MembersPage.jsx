@@ -579,11 +579,7 @@ const styles = {
     gap: "1rem",
   },
   memberCard: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.5rem",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-    border: "1px solid #e5e7eb",
+    ...commonStyles.card,
   },
   memberHeader: {
     display: "flex",
@@ -640,24 +636,18 @@ const styles = {
     margin: "0 0 1rem 0",
   },
   memberDetails: {
+    ...commonStyles.detailSection,
     borderTop: "1px solid #e5e7eb",
     paddingTop: "1rem",
   },
   detailRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "0.5rem",
+    ...commonStyles.detailRow,
   },
   detailLabel: {
-    fontSize: "0.75rem",
-    color: "#6b7280",
-    fontWeight: "500",
+    ...commonStyles.detailLabel,
   },
   detailValue: {
-    fontSize: "0.875rem",
-    color: "#111827",
-    fontWeight: "500",
+    ...commonStyles.detailValue,
   },
   paginationBar: {
     ...commonStyles.paginationBar,
@@ -691,26 +681,14 @@ const styles = {
   },
   // Modal Styles
   modalOverlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 1000,
+    ...commonStyles.modalOverlay,
   },
   modal: {
-    backgroundColor: "white",
-    borderRadius: "12px",
+    ...commonStyles.modal,
     width: "90%",
     maxWidth: "500px",
     maxHeight: "90vh",
     overflow: "hidden",
-    boxShadow:
-      "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
   },
   modalHeader: {
     padding: "1.5rem 1.5rem 1rem",

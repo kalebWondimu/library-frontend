@@ -108,13 +108,12 @@ const styles = {
     padding: "1rem",
   },
   card: {
-    backgroundColor: "#ffffff",
-    borderRadius: "12px",
+    ...commonStyles.card,
     padding: "2rem",
     width: "100%",
     maxWidth: "400px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
     textAlign: "center",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
   },
   title: {
     ...commonStyles.title,

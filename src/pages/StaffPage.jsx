@@ -647,11 +647,7 @@ const styles = {
     gap: "1.5rem",
   },
   staffCard: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.5rem",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-    border: "1px solid #e5e7eb",
+    ...commonStyles.card,
     display: "flex",
     flexDirection: "column",
   },
@@ -679,11 +675,7 @@ const styles = {
     flexShrink: 0,
   },
   statusBadge: {
-    display: "inline-block",
-    padding: "0.25rem 0.75rem",
-    borderRadius: "9999px",
-    fontSize: "0.75rem",
-    fontWeight: "500",
+    ...commonStyles.badge,
   },
   staffDetails: {
     borderTop: "1px solid #e5e7eb",
@@ -708,11 +700,7 @@ const styles = {
     fontWeight: "500",
   },
   roleBadge: {
-    display: "inline-block",
-    padding: "0.25rem 0.75rem",
-    borderRadius: "9999px",
-    fontSize: "0.75rem",
-    fontWeight: "500",
+    ...commonStyles.badge,
   },
   staffActions: {
     display: "flex",
