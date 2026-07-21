@@ -96,17 +96,7 @@ const MembersPage = () => {
     try {
       if (editingMember) {
         await memberService.updateMember(editingMember.id, formData);
-
-        // If demo user, update local state optimistically instead of refetch
-        if (currentUser?.is_demo) {
-          setMembers((prev) =>
-            prev.map((m) =>
-              m.id === editingMember.id ? { ...m, ...formData } : m,
-            ),
-          );
-        } else {
-          toast.success("Member updated successfully");
-        }
+        toast.success("Member updated successfully");
       } else {
         const today = new Date();
         const joinDate = today.toISOString().split("T")[0];
@@ -117,22 +107,11 @@ const MembersPage = () => {
         };
 
         await memberService.createMember(memberData);
-
-        if (currentUser?.is_demo) {
-          const tempMember = {
-            ...memberData,
-            id: -Date.now(),
-            activeBorrows: 0,
-          };
-          setMembers((prev) => [tempMember, ...prev]);
-          toast.success("Member created (temporary demo)");
-        } else {
-          toast.success("Member created successfully");
-        }
+        toast.success("Member created successfully");
       }
 
       handleCloseModal();
-      if (!currentUser?.is_demo) fetchMembers();
+      await fetchMembers();
     } catch (error) {
       toast.error("Failed to save member");
     }
@@ -142,14 +121,8 @@ const MembersPage = () => {
     if (window.confirm("Are you sure you want to delete this member?")) {
       try {
         await memberService.deleteMember(id);
-
-        if (currentUser?.is_demo) {
-          setMembers((prev) => prev.filter((m) => m.id !== id));
-          toast.success("Member deleted (temporary for demo)");
-        } else {
-          toast.success("Member deleted successfully");
-          fetchMembers();
-        }
+        toast.success("Member deleted successfully");
+        await fetchMembers();
       } catch (error) {
         let msg = "Unable to delete this member";
 

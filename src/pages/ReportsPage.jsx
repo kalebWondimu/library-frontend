@@ -202,6 +202,7 @@ const ReportsPage = () => {
     if (!reportData)
       return <p>Select a report card to review library insights and trends.</p>;
 
+    const filteredReportData = filterByDate(reportData);
     const paginatedData = getPaginatedData(reportData);
     const totalPages = getTotalPages(reportData);
 
@@ -272,7 +273,8 @@ const ReportsPage = () => {
               <div>
                 <h4>👥 Member Activity Overview</h4>
                 <p style={styles.sectionSubtitle}>
-                  Track borrow and return activity, outstanding loans, and recent engagement for each member.
+                  Track borrow and return activity, outstanding loans, and
+                  recent engagement for each member.
                 </p>
               </div>
             </div>
@@ -306,8 +308,8 @@ const ReportsPage = () => {
               <div style={styles.summaryCard}>
                 <span style={styles.summaryLabel}>Transactions</span>
                 <strong style={styles.summaryValue}>
-                  {Array.isArray(reportData)
-                    ? reportData.reduce(
+                  {Array.isArray(filteredReportData)
+                    ? filteredReportData.reduce(
                         (total, item) => total + (item.totalTransactions || 0),
                         0,
                       )
@@ -317,8 +319,8 @@ const ReportsPage = () => {
               <div style={styles.summaryCard}>
                 <span style={styles.summaryLabel}>Returns</span>
                 <strong style={styles.summaryValue}>
-                  {Array.isArray(reportData)
-                    ? reportData.reduce(
+                  {Array.isArray(filteredReportData)
+                    ? filteredReportData.reduce(
                         (total, item) => total + (item.totalReturns || 0),
                         0,
                       )
@@ -328,8 +330,8 @@ const ReportsPage = () => {
               <div style={styles.summaryCard}>
                 <span style={styles.summaryLabel}>Active Loans</span>
                 <strong style={styles.summaryValue}>
-                  {Array.isArray(reportData)
-                    ? reportData.reduce(
+                  {Array.isArray(filteredReportData)
+                    ? filteredReportData.reduce(
                         (total, item) => total + (item.outstandingBorrows || 0),
                         0,
                       )
@@ -356,13 +358,23 @@ const ReportsPage = () => {
                     {paginatedData.map((item) => (
                       <tr key={item.member_id || item.id}>
                         <td style={styles.tableCell}>{item.name}</td>
-                        <td style={styles.tableCell}>{item.totalBorrows || 0}</td>
-                        <td style={styles.tableCell}>{item.totalReturns || 0}</td>
-                        <td style={styles.tableCell}>{item.outstandingBorrows || 0}</td>
-                        <td style={styles.tableCell}>{item.completionRate || 0}%</td>
+                        <td style={styles.tableCell}>
+                          {item.totalBorrows || 0}
+                        </td>
+                        <td style={styles.tableCell}>
+                          {item.totalReturns || 0}
+                        </td>
+                        <td style={styles.tableCell}>
+                          {item.outstandingBorrows || 0}
+                        </td>
+                        <td style={styles.tableCell}>
+                          {item.completionRate || 0}%
+                        </td>
                         <td style={styles.tableCell}>
                           {item.lastActivityDate
-                            ? new Date(item.lastActivityDate).toLocaleDateString()
+                            ? new Date(
+                                item.lastActivityDate,
+                              ).toLocaleDateString()
                             : "No activity yet"}
                         </td>
                       </tr>
