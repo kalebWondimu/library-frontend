@@ -152,6 +152,13 @@ const StaffPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (isDemo) {
+      toast.error(
+        "Demo accounts can view staff information but cannot create or edit staff members. This is a read-only demo environment.",
+      );
+      return;
+    }
+
     const isUpdatingWithPassword =
       currentStaff && userRole === "super-admin" && formData.password;
 
@@ -203,6 +210,13 @@ const StaffPage = () => {
   };
 
   const handleDeleteStaff = async (id, username) => {
+    if (isDemo) {
+      toast.error(
+        "Demo accounts can view staff information but cannot delete staff members. This is a read-only demo environment.",
+      );
+      return;
+    }
+
     if (
       window.confirm(
         `Are you sure you want to delete staff member "${username}"? This action cannot be undone.`,

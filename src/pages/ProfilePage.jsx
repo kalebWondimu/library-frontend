@@ -37,6 +37,13 @@ const ProfilePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (user?.is_demo) {
+      toast.error(
+        "Demo accounts can view their profile but cannot update it. This is a read-only demo environment.",
+      );
+      return;
+    }
+
     if (formData.password || formData.confirmPassword) {
       if (formData.password !== formData.confirmPassword) {
         toast.error("Passwords do not match");

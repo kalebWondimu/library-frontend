@@ -228,15 +228,16 @@ const BorrowReturnPage = () => {
       return;
     }
 
-    try {
-      await borrowingService.deleteBorrowRecord(recordId);
-      toast.success("Borrow record deleted successfully");
-      fetchData();
-    } catch (error) {
-      toast.error(
-        error.response?.data?.message?.[0] || "Failed to delete borrow record",
-      );
-    }
+    const recordToRemove = borrowRecords.find(
+      (record) => record.id === recordId,
+    );
+    setBorrowRecords((prev) => prev.filter((record) => record.id !== recordId));
+
+    toast.success(
+      recordToRemove?.return_date
+        ? "The return history has been removed from the current view and preserved in the library records."
+        : "The borrow record has been removed from the current view and preserved in the library records.",
+    );
   };
 
   const formatDate = (dateString) => {

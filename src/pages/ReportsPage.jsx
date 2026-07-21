@@ -133,12 +133,24 @@ const ReportsPage = () => {
         ]);
       });
     } else if (activeReport === "member-activity") {
-      addRow(["Member", "Total Borrows", "Outstanding Borrows"]);
+      addRow([
+        "Member",
+        "Total Borrows",
+        "Total Returns",
+        "Active Borrows",
+        "Completion Rate",
+        "Last Activity",
+      ]);
       reportData.forEach((item) => {
         addRow([
           item.name || "Unknown",
           item.totalBorrows || 0,
+          item.totalReturns || 0,
           item.outstandingBorrows || 0,
+          `${item.completionRate || 0}%`,
+          item.lastActivityDate
+            ? new Date(item.lastActivityDate).toLocaleDateString()
+            : "No activity yet",
         ]);
       });
     } else if (activeReport === "overdue") {
@@ -256,7 +268,14 @@ const ReportsPage = () => {
       case "member-activity":
         return (
           <div style={styles.detailsBox}>
-            <h4>👥 Member Activity</h4>
+            <div style={styles.sectionHeading}>
+              <div>
+                <h4>👥 Member Activity Overview</h4>
+                <p style={styles.sectionSubtitle}>
+                  Track borrow and return activity, outstanding loans, and recent engagement for each member.
+                </p>
+              </div>
+            </div>
             <div style={styles.filterGroup}>
               <label>Filter by date:</label>
               <select
@@ -283,6 +302,41 @@ const ReportsPage = () => {
                 Reset Filter
               </button>
             </div>
+            <div style={styles.summaryGrid}>
+              <div style={styles.summaryCard}>
+                <span style={styles.summaryLabel}>Transactions</span>
+                <strong style={styles.summaryValue}>
+                  {Array.isArray(reportData)
+                    ? reportData.reduce(
+                        (total, item) => total + (item.totalTransactions || 0),
+                        0,
+                      )
+                    : 0}
+                </strong>
+              </div>
+              <div style={styles.summaryCard}>
+                <span style={styles.summaryLabel}>Returns</span>
+                <strong style={styles.summaryValue}>
+                  {Array.isArray(reportData)
+                    ? reportData.reduce(
+                        (total, item) => total + (item.totalReturns || 0),
+                        0,
+                      )
+                    : 0}
+                </strong>
+              </div>
+              <div style={styles.summaryCard}>
+                <span style={styles.summaryLabel}>Active Loans</span>
+                <strong style={styles.summaryValue}>
+                  {Array.isArray(reportData)
+                    ? reportData.reduce(
+                        (total, item) => total + (item.outstandingBorrows || 0),
+                        0,
+                      )
+                    : 0}
+                </strong>
+              </div>
+            </div>
             {!paginatedData || paginatedData.length === 0 ? (
               <p>👥 No member activity data.</p>
             ) : (
@@ -291,19 +345,25 @@ const ReportsPage = () => {
                   <thead>
                     <tr>
                       <th style={styles.tableHeader}>Member</th>
-                      <th style={styles.tableHeader}>Total Borrows</th>
-                      <th style={styles.tableHeader}>Outstanding</th>
+                      <th style={styles.tableHeader}>Borrows</th>
+                      <th style={styles.tableHeader}>Returns</th>
+                      <th style={styles.tableHeader}>Active</th>
+                      <th style={styles.tableHeader}>Completion</th>
+                      <th style={styles.tableHeader}>Last Activity</th>
                     </tr>
                   </thead>
                   <tbody>
                     {paginatedData.map((item) => (
                       <tr key={item.member_id || item.id}>
                         <td style={styles.tableCell}>{item.name}</td>
+                        <td style={styles.tableCell}>{item.totalBorrows || 0}</td>
+                        <td style={styles.tableCell}>{item.totalReturns || 0}</td>
+                        <td style={styles.tableCell}>{item.outstandingBorrows || 0}</td>
+                        <td style={styles.tableCell}>{item.completionRate || 0}%</td>
                         <td style={styles.tableCell}>
-                          {item.totalBorrows || 0}
-                        </td>
-                        <td style={styles.tableCell}>
-                          {item.outstandingBorrows || 0}
+                          {item.lastActivityDate
+                            ? new Date(item.lastActivityDate).toLocaleDateString()
+                            : "No activity yet"}
                         </td>
                       </tr>
                     ))}
@@ -506,6 +566,39 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     gap: "0.5rem",
+  },
+  sectionHeading: {
+    marginBottom: "0.75rem",
+  },
+  sectionSubtitle: {
+    margin: "0.25rem 0 0",
+    color: "#64748b",
+    fontSize: "0.95rem",
+  },
+  summaryGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+    gap: "0.75rem",
+    marginBottom: "1rem",
+  },
+  summaryCard: {
+    backgroundColor: "#f8fafc",
+    border: "1px solid #e2e8f0",
+    borderRadius: "10px",
+    padding: "0.85rem 1rem",
+    display: "flex",
+    flexDirection: "column",
+    gap: "0.25rem",
+  },
+  summaryLabel: {
+    color: "#64748b",
+    fontSize: "0.85rem",
+    fontWeight: 600,
+  },
+  summaryValue: {
+    color: "#0f172a",
+    fontSize: "1.1rem",
+    fontWeight: 700,
   },
   statsGrid: {
     display: "grid",
