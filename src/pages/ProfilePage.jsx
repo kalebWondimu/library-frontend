@@ -39,7 +39,7 @@ const ProfilePage = () => {
 
     if (user?.is_demo) {
       toast.error(
-        "Demo accounts can view their profile but cannot update it. This is a read-only demo environment.",
+        "Demo accounts can view their profile, but profile updates are restricted in this demo environment.",
       );
       return;
     }
@@ -105,7 +105,10 @@ const ProfilePage = () => {
     <div style={styles.container}>
       {user?.is_demo && (
         <div style={styles.demoWarning}>
-          <span>⚠️ Demo accounts cannot modify their profile or manage staff accounts.</span>
+          <span>
+            ⚠️ Demo accounts cannot modify their profile or manage staff
+            accounts.
+          </span>
         </div>
       )}
       <div style={styles.card}>
@@ -115,13 +118,17 @@ const ProfilePage = () => {
             <p style={styles.subtitle}>View and update your account.</p>
           </div>
           <button
-            style={{
-              ...styles.editButton,
-              ...(user?.is_demo ? styles.buttonDisabled : {}),
-            }}
+            style={styles.editButton}
             type="button"
-            onClick={() => setEditing(true)}
-            disabled={user?.is_demo}
+            onClick={() => {
+              if (user?.is_demo) {
+                toast.error(
+                  "Demo accounts can view their profile, but profile updates are restricted in this demo environment.",
+                );
+                return;
+              }
+              setEditing(true);
+            }}
           >
             Edit Profile
           </button>

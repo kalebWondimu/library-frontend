@@ -29,10 +29,7 @@ const StaffPage = () => {
         const parsedUser = JSON.parse(storedUser);
         setUserRole(parsedUser.role || "");
         setIsDemo(parsedUser.is_demo || false);
-        if (
-          !parsedUser.is_demo &&
-          (parsedUser.role === "super-admin" || parsedUser.role === "admin")
-        ) {
+        if (parsedUser.role === "super-admin" || parsedUser.role === "admin") {
           fetchStaff();
         } else {
           setLoading(false);
@@ -151,13 +148,6 @@ const StaffPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (isDemo) {
-      toast.error(
-        "Demo accounts can view staff information but cannot create or edit staff members. This is a read-only demo environment.",
-      );
-      return;
-    }
 
     const isUpdatingWithPassword =
       currentStaff && userRole === "super-admin" && formData.password;
